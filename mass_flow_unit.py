@@ -112,9 +112,16 @@ class MassFlowUnit:
     def obter_estado_equipamento(self):
         r_di = self.enviar_comando("pi").split(',')
         r_pi = self.enviar_comando("di").split(',')
+        r_pulse = self.enviar_comando("ps").split(',')
+        r_v = self.enviar_comando("v")
+        r_totalizer1 = self.enviar_comando("t1s").split(',')
+        r_totalizer2 = self.enviar_comando("t2s").split(',')
 
         mass_flow, volumetric_flow, total_meu_1, total_meu_2, gas_temp, gas_press, flow_alarm_st, temp_alarm_st, press_alarm_st, alarm_ev_register, diagnostic_ev_register = r_pi
         gas_idx, gas_name, current_mass_eng_unit, current_volum_eng_unit, totalizer1_mode, totalizer2_mode, analog_output, mod_buss = r_di
+        pulse_mode, flow_start, unit_per_pulse, pulse_time_interval = r_pulse 
+        _, start_flow_condition1, limit_volume1, pow_on_delay1, autoreset_mode1, autoreset_delay1 = r_totalizer1
+        _, start_flow_condition2, limit_volume2, pow_on_delay2, autoreset_mode2, autoreset_delay2 = r_totalizer2
 
         resposta = {
             "Mass Flow": float(mass_flow),
@@ -132,10 +139,26 @@ class MassFlowUnit:
             "Gás Name": gas_name,
             "Current Mass Unit":current_mass_eng_unit,
             "Current Volumetric Unit": current_volum_eng_unit,
-            "Totalizar 1 mode": self.__totalizer_status_translator[totalizer1_mode],
-            "Totalizar 2 mode": self.__totalizer_status_translator[totalizer2_mode],
             "Analog Output": self.__analog_output_translator[analog_output],
             "ModBuss": self.__mod_buss_translator[mod_buss],
+            "Valve Info": r_v,
+            "Pulse Mode": pulse_mode,
+            "Pulse Flow Start": flow_start,
+            "Pulse Unit per Pulse": unit_per_pulse,
+            "Pulse Time Interval [25-3276ms]": pulse_time_interval,
+            "Totalizer #1 Mode": self.__totalizer_status_translator[totalizer1_mode],
+            "Totalizer #1 Start Flow Condition": start_flow_condition1,
+            "Totalizer #1 Limit Volume": limit_volume1,
+            "Totalizer #1 Pow on Delay": pow_on_delay1,
+            "Totalizer #1 Autoreset Mode": autoreset_mode1,
+            "Totalizer #1 Autoreset Delay": autoreset_delay1,
+            "Totalizer #2 Mode": self.__totalizer_status_translator[totalizer2_mode],
+            "Totalizer #2 Start Flow Condition": start_flow_condition2,
+            "Totalizer #2 Limit Volume": limit_volume2,
+            "Totalizer #2 Pow on Delay": pow_on_delay2,
+            "Totalizer #2 Autoreset Mode": autoreset_mode2,
+            "Totalizer #2 Autoreset Delay": autoreset_delay2,
         }
 
         return resposta
+

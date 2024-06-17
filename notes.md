@@ -20,16 +20,14 @@ The DPC will reply: !12,90.00,10.00,<CR>
 
 
 Executar, uma vez, rotina para obter lista de gases configurados. Indice vai de [0-128] salvar essas valores em um dict/json.
+    Não necessário: Página 33-39 do manual
+
     Sequência comandos:
         json = {}
         for n in range(0,129):
             G:n
             return val G => json (inverter chave/valor para legibilidade humana; reinverter para enviar número à máquina)
 
-Criar rotina de setar gás conforme esses valores:
-    Select "Gas Name" from json. Get index as 'n'.
-    G:n
-    
 
 
 Apresentar todas essas informações na tela de escolha
@@ -66,6 +64,14 @@ Apresentar todas essas informações na tela de escolha
               
               Exemplo: DI:5,Helium,0.200,Sml/min,ml/min,E,D,0,1
 
+            PS .. retorna configurações de pulso corrente
+              <Mode> [E, D]
+              <FlowStart>
+              <Unit/Pulse>
+              <PulseTimeInterval>
+
+            
+
 
 
 Device info, obtem todas as informações do dispositivo
@@ -76,6 +82,27 @@ Ler e escrever parâmetros de uma mistura de gases (p.108)
     => 
 
 
+Pulse Output (p.96)
+    => P
+
+Totalizar (existem 2)
+    => T#<arg> .. o valor de # deve ser substituído por 1 ou 2. 
+
+      args:
+      Z -> Zera ou reseta o valor (não pode ser resetado se reset lock estiver ativado -> 1)
+      R -> Obtém valor corrente do volume lido
+      L -> Obtém status do lock...
+      L:n -> Define status do lock... 1 -> Travado; 0 -> Destravado
+
+      <TotalizerMode> []
+      <StartFlow>
+      <LimitVolume>
+      <PowOnDelay>
+      <AutoResetMode> [0 - Disable, 1 - Enable]
+      <AutoResetDelay>
+
+
+================================================================================================================
 Valve control (p.104) <!!! Do not change these parameters. Consult factory technical support for more info.>
     => V [sem arg, configurações correntes]
     
@@ -87,7 +114,7 @@ Valve control (p.104) <!!! Do not change these parameters. Consult factory techn
         n = O => Aberto
 
     => VPR [restaura definições de fábrica]
-
+================================================================================================================
 
 
 Definição das unidades de medida do fluxo de massa (Mass Flow):
