@@ -1,3 +1,37 @@
+Comandos de configuração básica para setpoint
+
+[
+    'M:P',           #Inicia program set_point
+    'VM:C',          #Fecha a válvula
+    'AIM:2',         #Define novo modo de input analógico
+    'PSM:E',         #Habilita modo PSP (program set point) (16) slots
+    'PSC:S.01',      #Habilita modo PSP (program set point) (16) slots
+    'PSL:E',         #Habilita modo loop do PSP
+    'PSA:0xFFFF'     #Habilita modo loop do PSP
+]
+
+[    
+    'PSP01:0.0,1',    
+    'PSP02:0.0,1000',    
+    'PSP03:1.0,1',    
+    'PSP04:1.0,500',    
+    'PSP05:0.0,1',    
+    'PSP06:0.0,500',    
+    'PSP07:5.0,1',    
+    'PSP08:5.0,500',    
+    'PSP09:0.0,1',    
+    'PSP10:0.0,500',    
+    'PSP11:25.0,1',    
+    'PSP12:25.0,500',    
+    'PSP13:0.0,1',    
+    'PSP14:0.0,500',    
+    'PSP15:100.0,1',    
+    'PSP16:100.0,500',    
+]
+
+
+Usar PSC:R para executar...
+
 1. To get currently selected Gas: !12,G<CR>
 The DPC will reply: !12,G:0,AIR<CR>
 (assuming the Current Gas is #0, calibrated for AIR)
