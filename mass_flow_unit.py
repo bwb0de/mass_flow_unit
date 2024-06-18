@@ -4,7 +4,6 @@ import json
 
 class MassFlowUnit:
     def __init__(self, port_add, baud_rate, flux_max_v=100, timeout=1) -> None:
-        #self.mass_flow_unit = serial.Serial(port_add, baud_rate, timeout=1)
         self.flux_max_v = flux_max_v
         self.port_add = port_add
         self.baud_rate = baud_rate
@@ -148,11 +147,16 @@ class MassFlowUnit:
         wait_time = command_routine['wait_time']
         wait_step = 0
 
+        sequencia_comandos_para_envio = []
+
         for command in commands:
-            print(command)
+            sequencia_comandos_para_envio.append(command)
             if command == 'PSC:R':
-                print("Aguardando execução desta seção da rotina...")
+                print(f"MassFlowUnit em '{self.port_add}': aguardando execução de sequência de comandos...")
+                self.enviar_comandos(sequencia_comandos_para_envio)     #Teste pendente...
                 time.sleep(wait_time[wait_step])
+                sequencia_comandos_para_envio = []
+
         print(f"Execução de MassFlowUnit em '{self.port_add}' concluída...")
 
 
@@ -179,42 +183,10 @@ class MassFlowUnit:
 
 
     def executar_rotina_padrao(self):
-
-        teste = [ 
-            (0.0, 1),
-            (0.0, 1),
-            (1.0, 1),
-            (1.0, 1),
-            (0.0, 1),
-            (0.0, 1),
-            (5.0, 1),
-            (5.0, 1),
-            (0.0, 1),
-            (0.0, 1),
-            (25.0, 1),
-            (25.0, 1),
-            (0.0, 1),
-            (0.0, 1),
-            (100.0, 1),
-            (100.0, 1),
-            (75.0, 1),
-            (75.0, 1),
-            (85.0, 1),
-            (85.0, 1),
-            (95.0, 1),
-            (95.0, 1),
-        ]
-
-        rotina = self.criar_rotina_de_setpoints(teste, 7)
-        print(rotina)
-        input()
-        #rotina = self.criar_rotina_de_setpoints(self.setpoint_saved_routine)
+        rotina = self.criar_rotina_de_setpoints(self.setpoint_saved_routine)
         self.executar_rotina_de_comandos(rotina)
 
 
-    def verificar_conexao(self):
-        if self.mass_flow_unit.is_open: print(f"MassFlow Device em {self.port_add} at {self.baud_rate} baud."); return
-        print(f"Falha ao conectar na porta {self.port_add}.")
 
     def enviar_comandos(self, commandos: list):
         try:
@@ -277,7 +249,7 @@ class MassFlowUnit:
         return self.decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(hex_value_str, self.alarm_events_register)
 
 
-    def obter_estado_equipamento(self):
+    def obter_estado_equipamento(self): #Pendente
         r_di = self.enviar_comando(["pi"])
         r_pi = self.enviar_comando("di").split(',')
         r_pulse = self.enviar_comando("p:s")
