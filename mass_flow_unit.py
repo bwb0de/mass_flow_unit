@@ -141,23 +141,27 @@ class MassFlowUnit:
         assert not command_routine.get('commands') is None
         assert not command_routine.get('wait_time') is None
 
-        print(f"Iniciando rotina de MassFlowUnit em '{self.port_add}'...")
+        print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: iniciando rotina!")
 
         commands = command_routine['commands']
         wait_time = command_routine['wait_time']
         wait_step = 0
 
         sequencia_comandos_para_envio = []
+        numero_comandos_executados = 0
+        numero_total_comandos = len(commands)
 
         for command in commands:
             sequencia_comandos_para_envio.append(command)
+            numero_comandos_executados += 1
             if command == 'PSC:R':
-                print(f"MassFlowUnit em '{self.port_add}': aguardando execução de sequência de comandos...")
-                self.enviar_comandos(sequencia_comandos_para_envio)     #Teste pendente...
+                print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: executando {numero_comandos_executados} de {numero_total_comandos} [{(numero_comandos_executados/numero_total_comandos)*100:.2f}%], tempo espera {wait_time[wait_step]}s...")
+                #self.enviar_comandos(sequencia_comandos_para_envio)     #Teste pendente...
                 time.sleep(wait_time[wait_step])
+                wait_step += 1
                 sequencia_comandos_para_envio = []
 
-        print(f"Execução de MassFlowUnit em '{self.port_add}' concluída...")
+        print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: rotina concluída!")
 
 
     def definir_arquivo_de_rotina_alvo(self, caminho_para_arquivo):
