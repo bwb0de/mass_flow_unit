@@ -2,6 +2,13 @@ import serial
 import time
 import json
 
+
+### Funções de execução
+# enviar_comandos
+# enviar_comando
+# executar_arquivos_de_rotina_psp_sequencialmente
+
+
 class MassFlowUnit:
     def __init__(self, port_add, baud_rate, flux_max_v=100, timeout=1) -> None:
         self.flux_max_v = flux_max_v
@@ -87,7 +94,7 @@ class MassFlowUnit:
            (100.0, 500)
          ]
 
-    def criar_rotina_de_setpoints(self, command_args: list, loops: int = 1):
+    def criar_rotina_de_setpoints_psp(self, command_args: list, loops: int = 1):
         psp_base = [
             'M:P',           #Inicia program set_point
             'VM:C',          #Fecha a válvula
@@ -135,7 +142,6 @@ class MassFlowUnit:
 
         return rotina        
 
-
     def executar_rotina_de_comandos(self, command_routine):
         assert isinstance(command_routine, dict)
         assert not command_routine.get('commands') is None
@@ -156,17 +162,19 @@ class MassFlowUnit:
             numero_comandos_executados += 1
             if command == 'PSC:R':
                 print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: executando {numero_comandos_executados} de {numero_total_comandos} [{(numero_comandos_executados/numero_total_comandos)*100:.2f}%], tempo espera {wait_time[wait_step]}s...")
-                #self.enviar_comandos(sequencia_comandos_para_envio)     #Teste pendente...
+                v = self.enviar_comandos(sequencia_comandos_para_envio)
+                if v == 'Erro': return
                 time.sleep(wait_time[wait_step])
                 wait_step += 1
                 sequencia_comandos_para_envio = []
 
-        print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: rotina concluída!")
+        v = self.enviar_comandos(sequencia_comandos_para_envio)
+        if v == 'Erro': return
 
+        print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: rotina concluída!")
 
     def definir_arquivo_de_rotina_alvo(self, caminho_para_arquivo):
         self.routine_file = caminho_para_arquivo
-
 
     def executar_arquivo_de_rotina(self):
         with open(self.routine_file, 'r') as f:
@@ -174,25 +182,24 @@ class MassFlowUnit:
             conteudo = json.loads(conteudo)
             assert not conteudo.get('loops') is None, "Arquivo em formato incorreto... Possui o campo 'loops'?"
             assert not conteudo.get('argumentos') is None, "Arquivo em formato incorreto... Possui o campo 'argumentos'?"
-            rotina = self.criar_rotina_de_setpoints(conteudo['argumentos'], loops=conteudo['loops'] )
+            rotina = self.criar_rotina_de_setpoints_psp(conteudo['argumentos'], loops=conteudo['loops'] )
             self.executar_rotina_de_comandos(rotina)
 
-
-    def executar_arquivos_de_rotina_sequencialmente(self, aquivos_de_rotina: list):
+    def executar_arquivos_de_rotina_psp_sequencialmente(self, aquivos_de_rotina: list):
         assert isinstance(aquivos_de_rotina, list), "O argumento 'arquivos_de_rotina' deve ser uma lista com caminhos válidos para os arquivos de rotina..."
 
         for caminho_para_arquivo in aquivos_de_rotina:
             self.definir_arquivo_de_rotina_alvo(caminho_para_arquivo)
             self.executar_arquivo_de_rotina()
 
-
     def executar_rotina_padrao(self):
-        rotina = self.criar_rotina_de_setpoints(self.setpoint_saved_routine)
+        rotina = self.criar_rotina_de_setpoints_psp(self.setpoint_saved_routine)
         self.executar_rotina_de_comandos(rotina)
 
-
-
     def enviar_comandos(self, commandos: list):
+
+        if commandos == []: return
+
         try:
             with serial.Serial(self.port_add, self.baud_rate, timeout=1) as ser:
                 respostas = []
@@ -204,8 +211,8 @@ class MassFlowUnit:
                 return resposta
 
         except serial.SerialException as e:
-            print(f"Erro ao conectar na porta serial: {e}")        
-
+            print(f"Erro ao conectar na porta serial: {e}")    
+            return "Erro"    
 
     def enviar_comando(self, comando: str):
         try:
@@ -218,8 +225,7 @@ class MassFlowUnit:
         except serial.SerialException as e:
             print(f"Erro ao conectar na porta serial: {e}")        
 
-
-    def __decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(self, hex_value, alarm_event_mapping):
+    def decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(self, hex_value, alarm_event_mapping):
         
         #Verificar no manual
         
@@ -251,7 +257,6 @@ class MassFlowUnit:
 
     def decodificar_alarm_event(self, hex_value_str):
         return self.decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(hex_value_str, self.alarm_events_register)
-
 
     def obter_estado_equipamento(self): #Pendente
         r_di = self.enviar_comando(["pi"])

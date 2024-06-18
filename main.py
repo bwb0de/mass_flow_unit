@@ -9,12 +9,12 @@ mass_flow_unit1 = MassFlowUnit('COM4', baud_rate)
 mass_flow_unit2 = MassFlowUnit('COM5', baud_rate)
 
 lista_arquivos_rotina1 = ['/home/danielc/Documentos/Devel/GitHub/mass_flow_unit/arquivos_de_rotinas/sequencia_argumentos.json']
-lista_arquivos_rotina2 = ['/home/danielc/Documentos/Devel/GitHub/mass_flow_unit/arquivos_de_rotinas/sequencia_argumentos2.json']
+lista_arquivos_rotina2 = ['/home/danielc/Documentos/Devel/GitHub/mass_flow_unit/arquivos_de_rotinas/sequencia_argumentos2.json', '/home/danielc/Documentos/Devel/GitHub/mass_flow_unit/arquivos_de_rotinas/sequencia_argumentos2.json']
 
 
 
 def executa_subprocesso(objeto: MassFlowUnit, argumento):
-    resultado = objeto.executar_arquivos_de_rotina_sequencialmente(argumento)
+    resultado = objeto.executar_arquivos_de_rotina_psp_sequencialmente(argumento)
     return resultado
 
 
