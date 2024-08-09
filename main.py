@@ -5,8 +5,8 @@ from multiprocessing import Process
 
 baud_rate = 9600
 
-mass_flow_unit1 = MassFlowUnit('COM4', baud_rate)
-mass_flow_unit2 = MassFlowUnit('COM5', baud_rate)
+mass_flow_unit1 = MassFlowUnit('COM3', baud_rate)
+mass_flow_unit2 = MassFlowUnit('COM4', baud_rate)
 
 lista_arquivos_rotina1 = ['/home/danielc/Documentos/Devel/GitHub/mass_flow_unit/arquivos_de_rotinas/sequencia_argumentos.json']
 lista_arquivos_rotina2 = ['/home/danielc/Documentos/Devel/GitHub/mass_flow_unit/arquivos_de_rotinas/sequencia_argumentos2.json', '/home/danielc/Documentos/Devel/GitHub/mass_flow_unit/arquivos_de_rotinas/sequencia_argumentos2.json']

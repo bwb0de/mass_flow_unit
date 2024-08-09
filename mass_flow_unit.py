@@ -207,8 +207,8 @@ class MassFlowUnit:
                     comando_teste = bytes(f'{cmd}\r\n', 'utf-8')
                     ser.write(comando_teste)
                     resposta = ser.readline().decode().strip()
-                    respostas.append(cmd, resposta)
-                return resposta
+                    respostas.append((cmd, resposta))
+                return respostas
 
         except serial.SerialException as e:
             print(f"Erro ao conectar na porta serial: {e}")    
