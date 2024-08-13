@@ -259,14 +259,20 @@ class MassFlowUnit:
         return self.decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(hex_value_str, self.alarm_events_register)
 
     def obter_estado_equipamento(self): #Pendente
-        r_di = self.enviar_comando(["pi"])
-        r_pi = self.enviar_comando("di").split(',')
-        r_pulse = self.enviar_comando("p:s")
-        r_v = self.enviar_comando("v")
-        r_totalizer1 = self.enviar_comando("t1s")
-        r_totalizer2 = self.enviar_comando("t2s")
+        dados = self.enviar_comandos([
+            'DI',
+            'PI',
+            'MR,1',
+            'MR,2',
+            'MR,3',
+            'AI,M',
+            'READ,17',
+            'V,M'
+        ])
 
-        return r_di, r_pi, r_pulse, r_v, r_totalizer1, r_totalizer2
+        print(dados)
+
+        return dados
 
         #mass_flow, volumetric_flow, total_meu_1, total_meu_2, gas_temp, gas_press, flow_alarm_st, temp_alarm_st, press_alarm_st, alarm_ev_register, diagnostic_ev_register = r_pi
         #gas_idx, gas_name, current_mass_eng_unit, current_volum_eng_unit, totalizer1_mode, totalizer2_mode, analog_output, mod_buss = r_di
