@@ -17,26 +17,7 @@ print(mass_flow_unit2.enviar_comandos(['DI', 'PI', 'SP,0.4', 'SP']))
 
 
 """
-print(mass_flow_unit2.enviar_comandos([
-    'PS,M',
-    'PS,C',
-    'PS,L',
-    'PS,P,1',
-    'PS,P,2',
-    'PS,P,3',
-    'PS,P,4',
-    'PS,P,5',
-    'PS,P,6',
-    'PS,P,7',
-    'PS,P,8',
-    'PS,P,9',
-    'PS,P,10',
-    'PS,P,11',
-    'PS,P,12',
-    'PS,P,13',
-    'PS,P,14',
-    'PS,P,15',
-    'PS,P,16']))
+print(mass_flow_unit2
 """
 '''
 print(mass_flow_unit2.enviar_comandos([

@@ -3,12 +3,6 @@ import time
 import json
 
 
-### Funções de execução
-# enviar_comandos
-# enviar_comando
-# executar_arquivos_de_rotina_psp_sequencialmente
-
-
 class MassFlowUnit:
     def __init__(self, port_add, baud_rate, flux_max_v=100, timeout=1) -> None:
         self.flux_max_v = flux_max_v
@@ -94,15 +88,44 @@ class MassFlowUnit:
            (100.0, 500)
          ]
 
+    def interromper_execução_psp(self):
+        return self.enviar_comandos(['PS,S'])
+
+    def obter_configuracoes_psp_correntes(self, verbose=False):
+        resultados = self.enviar_comandos([
+            'PS,P,1',
+            'PS,P,2',
+            'PS,P,3',
+            'PS,P,4',
+            'PS,P,5',
+            'PS,P,6',
+            'PS,P,7',
+            'PS,P,8',
+            'PS,P,9',
+            'PS,P,10',
+            'PS,P,11',
+            'PS,P,12',
+            'PS,P,13',
+            'PS,P,14',
+            'PS,P,15',
+            'PS,P,16'
+        ])
+
+        if verbose:
+            print(f'MassFlowUnit, em {self.port_add}:')
+            for comando, resposta in resultados:
+                print(f' - {resposta}')        
+
+        return resultados
+
     def criar_rotina_de_setpoints_psp(self, command_args: list, loops: int = 1):
         psp_base = [
-            'M:P',           #Inicia program set_point
-            'VM:C',          #Fecha a válvula
-            'AIM:2',         #Define novo modo de input analógico
-            'PSM:E',         #Habilita modo PSP (program set point) (16) slots
-            'PSC:S.01',      #Habilita modo PSP (program set point) (16) slots
-            'PSL:E',         #Habilita modo loop do PSP
-            'PSA:0xFFFF'     #Habilita modo loop do PSP
+
+           #'M,D',    #'M,D': Interface digital, 'M,A': interface analógica, 'M,L': local interface, ''
+            'M,P',    #Inicia program set_point
+            'V,M,C',  #Fecha a válvula
+            'PS,M,E', #Habilita modo PSP
+            'PS,L,E', #Habilita modo loop do PSP
         ]
 
         command_args_extended = []
@@ -124,17 +147,18 @@ class MassFlowUnit:
         for percent_arg, time_arg in command_args_extended:
             n_str = str(n).zfill(2)
             wait_time += int(time_arg)
-            output.append(f'PSP{n}:{percent_arg},{time_arg}')
+            output.append(f'PS,P,{n},{percent_arg},{time_arg}')
             n += 1
             arguments_pending -= 1
             if n == 17 and arguments_pending > 0:
-                output.append('PSC:R')
+                output.append('PS,A,0xFFFF')
+                output.append('PS,P,R')
                 output.extend(psp_base)
                 output_wait_time.append(wait_time)
                 wait_time = 0
                 n = 1
 
-        output.append('PSC:R')
+        output.append('PS,P,R')
         output_wait_time.append(wait_time)
 
         rotina['commands'] = output
@@ -160,7 +184,7 @@ class MassFlowUnit:
         for command in commands:
             sequencia_comandos_para_envio.append(command)
             numero_comandos_executados += 1
-            if command == 'PSC:R':
+            if command == 'PS,P,R':
                 print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: executando {numero_comandos_executados} de {numero_total_comandos} [{(numero_comandos_executados/numero_total_comandos)*100:.2f}%], tempo espera {wait_time[wait_step]}s...")
                 v = self.enviar_comandos(sequencia_comandos_para_envio)
                 if v == 'Erro': return
