@@ -4,11 +4,24 @@ import json
 
 
 class MassFlowUnit:
-    def __init__(self, port_add, baud_rate, flux_max_v=100, timeout=1) -> None:
-        self.flux_max_v = flux_max_v
-        self.port_add = port_add
-        self.baud_rate = baud_rate
-        self.routine_file = None
+    def __init__(self, porta_de_conexao, taxa_de_transmissao,timeout=1) -> None:
+        self.porta_de_conexao = porta_de_conexao
+        self.taxa_de_transmissao = taxa_de_transmissao
+        self.arquivo_de_rotina = None
+        self.numero_equipamento = self.enviar_comando('MR,1')
+
+        if self.numero_equipamento in {'624643-1','608314-1'}:
+            self.fluxo_maximo = 100
+        elif self.numero_equipamento in {'624644-1','608315-1'}:
+            self.fluxo_maximo = 200
+
+        # Ar e não ar...
+        if self.numero_equipamento in {'624643-1','608314-1'}:
+            self.conteudo_fluxo = 'não Ar'
+        elif self.numero_equipamento in {'624644-1','608315-1'}:
+            self.conteudo_fluxo = 'Ar'
+
+        self.fracao_de_fluxo = 100/self.fluxo_maximo
         
         self.alarm_st_translator = {
             "D": "Disabled",
@@ -112,7 +125,7 @@ class MassFlowUnit:
         ])
 
         if verbose:
-            print(f'MassFlowUnit, em {self.port_add}:')
+            print(f'MassFlowUnit, em {self.porta_de_conexao}:')
             for comando, resposta in resultados:
                 print(f' - {resposta}')        
 
@@ -171,7 +184,7 @@ class MassFlowUnit:
         assert not command_routine.get('commands') is None
         assert not command_routine.get('wait_time') is None
 
-        print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: iniciando rotina!")
+        print(f"MassFlowUnit em '{self.porta_de_conexao}' {time.ctime()}: iniciando rotina!")
 
         commands = command_routine['commands']
         wait_time = command_routine['wait_time']
@@ -185,7 +198,7 @@ class MassFlowUnit:
             sequencia_comandos_para_envio.append(command)
             numero_comandos_executados += 1
             if command == 'PS,P,R':
-                print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: executando {numero_comandos_executados} de {numero_total_comandos} [{(numero_comandos_executados/numero_total_comandos)*100:.2f}%], tempo espera {wait_time[wait_step]}s...")
+                print(f"MassFlowUnit em '{self.porta_de_conexao}' {time.ctime()}: executando {numero_comandos_executados} de {numero_total_comandos} [{(numero_comandos_executados/numero_total_comandos)*100:.2f}%], tempo espera {wait_time[wait_step]}s...")
                 v = self.enviar_comandos(sequencia_comandos_para_envio)
                 if v == 'Erro': return
                 time.sleep(wait_time[wait_step])
@@ -195,13 +208,13 @@ class MassFlowUnit:
         v = self.enviar_comandos(sequencia_comandos_para_envio)
         if v == 'Erro': return
 
-        print(f"MassFlowUnit em '{self.port_add}' {time.ctime()}: rotina concluída!")
+        print(f"MassFlowUnit em '{self.porta_de_conexao}' {time.ctime()}: rotina concluída!")
 
     def definir_arquivo_de_rotina_alvo(self, caminho_para_arquivo):
-        self.routine_file = caminho_para_arquivo
+        self.arquivo_de_rotina = caminho_para_arquivo
 
     def executar_arquivo_de_rotina(self):
-        with open(self.routine_file, 'r') as f:
+        with open(self.arquivo_de_rotina, 'r') as f:
             conteudo = f.read()
             conteudo = json.loads(conteudo)
             assert not conteudo.get('loops') is None, "Arquivo em formato incorreto... Possui o campo 'loops'?"
@@ -225,7 +238,7 @@ class MassFlowUnit:
         if commandos == []: return
 
         try:
-            with serial.Serial(self.port_add, self.baud_rate, timeout=1) as ser:
+            with serial.Serial(self.porta_de_conexao, self.taxa_de_transmissao, timeout=1) as ser:
                 respostas = []
                 for cmd in commandos:
                     comando_teste = bytes(f'{cmd}\r\n', 'utf-8')
@@ -240,7 +253,7 @@ class MassFlowUnit:
 
     def enviar_comando(self, comando: str):
         try:
-            with serial.Serial(self.port_add, self.baud_rate, timeout=1) as ser:
+            with serial.Serial(self.porta_de_conexao, self.taxa_de_transmissao, timeout=1) as ser:
                 comando_teste = bytes(f'{comando}\r\n', 'utf-8')  
                 ser.write(comando_teste)
                 resposta = ser.readline().decode().strip()
@@ -293,8 +306,6 @@ class MassFlowUnit:
             'READ,17',
             'V,M'
         ])
-
-        print(dados)
 
         return dados
 
