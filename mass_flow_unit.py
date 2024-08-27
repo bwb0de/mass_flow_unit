@@ -3,6 +3,42 @@ import time
 import json
 
 
+
+class MassFlowUnitTest:
+    def __init__(self, porta, taxa_de_transmissao, fluxo_maximo:int, conteudo_fluxo:str) -> None:
+        self.porta_de_conexao = porta
+        self.taxa_de_transmissao = taxa_de_transmissao
+        self.arquivo_de_rotina = None
+        self.numero_equipamento = '999999-9mock'
+        self.fluxo_maximo = fluxo_maximo
+        self.conteudo_fluxo = conteudo_fluxo
+        self.fracao_de_fluxo = 100/self.fluxo_maximo
+        self.fila_execucao = [] #incluir
+
+    def __repr__(self) -> str:
+        label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
+        return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}: '
+
+    def inserir_na_fila_execucao(self, script_ajustado_fluxo):
+        self.fila_execucao.extend(script_ajustado_fluxo)
+
+    def executar_acao_da_fila(self):
+        if self.fila_execucao == []: return
+        fluxo, tempo = self.fila_execucao[0]
+        self.fila_execucao = self.fila_execucao[1:]
+        print(f"{self} definindo fluxo para {fluxo}")
+        return tempo
+    
+    def modo_digital(self):
+        print(f'{self} entrando em modo digital com válvula no automático...')
+
+    def fechar_fluxo(self):
+        print(f'{self} fechando fluxo...')
+
+
+    
+    
+
 class MassFlowUnit:
     def __init__(self, porta_de_conexao, taxa_de_transmissao,timeout=1) -> None:
         self.porta_de_conexao = porta_de_conexao
@@ -17,7 +53,7 @@ class MassFlowUnit:
 
         # Ar e não ar...
         if self.numero_equipamento in {'624643-1','608314-1'}:
-            self.conteudo_fluxo = 'não Ar'
+            self.conteudo_fluxo = 'produto'
         elif self.numero_equipamento in {'624644-1','608315-1'}:
             self.conteudo_fluxo = 'Ar'
 
@@ -101,140 +137,29 @@ class MassFlowUnit:
            (100.0, 500)
          ]
 
-    def interromper_execução_psp(self):
-        return self.enviar_comandos(['PS,S'])
+    def __repr__(self) -> str:
+        label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
+        return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}: '
 
-    def obter_configuracoes_psp_correntes(self, verbose=False):
-        resultados = self.enviar_comandos([
-            'PS,P,1',
-            'PS,P,2',
-            'PS,P,3',
-            'PS,P,4',
-            'PS,P,5',
-            'PS,P,6',
-            'PS,P,7',
-            'PS,P,8',
-            'PS,P,9',
-            'PS,P,10',
-            'PS,P,11',
-            'PS,P,12',
-            'PS,P,13',
-            'PS,P,14',
-            'PS,P,15',
-            'PS,P,16'
-        ])
+    def inserir_na_fila_execucao(self, script_ajustado_fluxo):
+        self.fila_execucao.extend(script_ajustado_fluxo)
 
-        if verbose:
-            print(f'MassFlowUnit, em {self.porta_de_conexao}:')
-            for comando, resposta in resultados:
-                print(f' - {resposta}')        
+    def executar_acao_da_fila(self):
+        if self.fila_execucao == []: return
+        fluxo, tempo = self.fila_execucao[0]
+        self.fila_execucao = self.fila_execucao[1:]
+        print(f"{self} definindo fluxo para {fluxo}")
+        return tempo
+    
+    def modo_digital(self):
+        print(f'{self} entrando em modo digital com válvula no automático...')
+        self.enviar_comandos(['M,D', 'SP,0.0', 'SP', 'V,M,A'])
 
-        return resultados
-
-    def criar_rotina_de_setpoints_psp(self, command_args: list, loops: int = 1):
-        psp_base = [
-
-           #'M,D',    #'M,D': Interface digital, 'M,A': interface analógica, 'M,L': local interface, ''
-            'M,P',    #Inicia program set_point
-            'V,M,C',  #Fecha a válvula
-            'PS,M,E', #Habilita modo PSP
-            'PS,L,E', #Habilita modo loop do PSP
-        ]
-
-        command_args_extended = []
-
-        while loops:
-            command_args_extended.extend(command_args)
-            loops -= 1
-
-        rotina = {}
-        output_wait_time = []
-
-        output = []
-        output.extend(psp_base)
-
-        n = 1
-        arguments_pending = len(command_args_extended)
-        wait_time = 0
-
-        for percent_arg, time_arg in command_args_extended:
-            n_str = str(n).zfill(2)
-            wait_time += int(time_arg)
-            output.append(f'PS,P,{n},{percent_arg},{time_arg}')
-            n += 1
-            arguments_pending -= 1
-            if n == 17 and arguments_pending > 0:
-                output.append('PS,A,0xFFFF')
-                output.append('PS,P,R')
-                output.extend(psp_base)
-                output_wait_time.append(wait_time)
-                wait_time = 0
-                n = 1
-
-        output.append('PS,P,R')
-        output_wait_time.append(wait_time)
-
-        rotina['commands'] = output
-        rotina['wait_time'] = output_wait_time
-
-        return rotina        
-
-    def executar_rotina_de_comandos(self, command_routine):
-        assert isinstance(command_routine, dict)
-        assert not command_routine.get('commands') is None
-        assert not command_routine.get('wait_time') is None
-
-        print(f"MassFlowUnit em '{self.porta_de_conexao}' {time.ctime()}: iniciando rotina!")
-
-        commands = command_routine['commands']
-        wait_time = command_routine['wait_time']
-        wait_step = 0
-
-        sequencia_comandos_para_envio = []
-        numero_comandos_executados = 0
-        numero_total_comandos = len(commands)
-
-        for command in commands:
-            sequencia_comandos_para_envio.append(command)
-            numero_comandos_executados += 1
-            if command == 'PS,P,R':
-                print(f"MassFlowUnit em '{self.porta_de_conexao}' {time.ctime()}: executando {numero_comandos_executados} de {numero_total_comandos} [{(numero_comandos_executados/numero_total_comandos)*100:.2f}%], tempo espera {wait_time[wait_step]}s...")
-                v = self.enviar_comandos(sequencia_comandos_para_envio)
-                if v == 'Erro': return
-                time.sleep(wait_time[wait_step])
-                wait_step += 1
-                sequencia_comandos_para_envio = []
-
-        v = self.enviar_comandos(sequencia_comandos_para_envio)
-        if v == 'Erro': return
-
-        print(f"MassFlowUnit em '{self.porta_de_conexao}' {time.ctime()}: rotina concluída!")
-
-    def definir_arquivo_de_rotina_alvo(self, caminho_para_arquivo):
-        self.arquivo_de_rotina = caminho_para_arquivo
-
-    def executar_arquivo_de_rotina(self):
-        with open(self.arquivo_de_rotina, 'r') as f:
-            conteudo = f.read()
-            conteudo = json.loads(conteudo)
-            assert not conteudo.get('loops') is None, "Arquivo em formato incorreto... Possui o campo 'loops'?"
-            assert not conteudo.get('argumentos') is None, "Arquivo em formato incorreto... Possui o campo 'argumentos'?"
-            rotina = self.criar_rotina_de_setpoints_psp(conteudo['argumentos'], loops=conteudo['loops'] )
-            self.executar_rotina_de_comandos(rotina)
-
-    def executar_arquivos_de_rotina_psp_sequencialmente(self, aquivos_de_rotina: list):
-        assert isinstance(aquivos_de_rotina, list), "O argumento 'arquivos_de_rotina' deve ser uma lista com caminhos válidos para os arquivos de rotina..."
-
-        for caminho_para_arquivo in aquivos_de_rotina:
-            self.definir_arquivo_de_rotina_alvo(caminho_para_arquivo)
-            self.executar_arquivo_de_rotina()
-
-    def executar_rotina_padrao(self):
-        rotina = self.criar_rotina_de_setpoints_psp(self.setpoint_saved_routine)
-        self.executar_rotina_de_comandos(rotina)
+    def fechar_fluxo(self):
+        print(f'{self} fechando fluxo...')
+        self.enviar_comandos(['V,M,C'])
 
     def enviar_comandos(self, commandos: list):
-
         if commandos == []: return
 
         try:
@@ -262,40 +187,7 @@ class MassFlowUnit:
         except serial.SerialException as e:
             print(f"Erro ao conectar na porta serial: {e}")        
 
-    def decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(self, hex_value, alarm_event_mapping):
-        
-        #Verificar no manual
-        
-        """
-        Decodifica o valor hexadecimal com base no alarm_event_mapping.
-        
-        :param hex_value: Hexadecimal value as a string (e.g., '0x05')
-        :param event_mapping: Dictionary mapping bit positions to event descriptions
-        :return: List of active events
-        """
-        
-        # Convertendo de string_hex para binário
-        binary_value = bin(int(hex_value, 16))[2:].zfill(8)
-        print(binary_value)
-        binary_value = binary_value[::-1]
-        print(binary_value)
-        print("Size",len(binary_value))
-    
-        eventos_ativos = []
-        for bit_pos, event_desc in alarm_event_mapping.items():
-            print(bit_pos)
-            if binary_value[bit_pos] == '1':
-                eventos_ativos.append(event_desc)
-        
-        return eventos_ativos
-    
-    def decodificar_diagnostic_event(self, hex_value_str):
-        return self.decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(hex_value_str, self.diagnostic_events_register)
-
-    def decodificar_alarm_event(self, hex_value_str):
-        return self.decodificar_valor_hexadecimal_de_alarm_or_diagnostic_ev_register(hex_value_str, self.alarm_events_register)
-
-    def obter_estado_equipamento(self): #Pendente
+    def obter_estado_equipamento(self):
         dados = self.enviar_comandos([
             'DI',
             'PI',
@@ -307,13 +199,8 @@ class MassFlowUnit:
             'V,M'
         ])
 
-        return dados
-
-        #mass_flow, volumetric_flow, total_meu_1, total_meu_2, gas_temp, gas_press, flow_alarm_st, temp_alarm_st, press_alarm_st, alarm_ev_register, diagnostic_ev_register = r_pi
-        #gas_idx, gas_name, current_mass_eng_unit, current_volum_eng_unit, totalizer1_mode, totalizer2_mode, analog_output, mod_buss = r_di
-        #pulse_mode, flow_start, unit_per_pulse, pulse_time_interval = r_pulse 
-        #_, start_flow_condition1, limit_volume1, pow_on_delay1, autoreset_mode1, autoreset_delay1 = r_totalizer1
-        #_, start_flow_condition2, limit_volume2, pow_on_delay2, autoreset_mode2, autoreset_delay2 = r_totalizer2
+        gas_idx, gas_name, current_mass_eng_unit, current_volum_eng_unit, totalizer1_mode, totalizer2_mode, analog_output, mod_buss = dados[0][1].split(',')
+        mass_flow, volumetric_flow, total_meu_1, total_meu_2, gas_temp, gas_press, flow_alarm_st, temp_alarm_st, press_alarm_st, alarm_ev_register, diagnostic_ev_register = dados[1][1]
 
         resposta = {
             "Mass Flow": float(mass_flow),
@@ -333,23 +220,29 @@ class MassFlowUnit:
             "Current Volumetric Unit": current_volum_eng_unit,
             "Analog Output": self.analog_output_translator[analog_output],
             "ModBuss": self.mod_buss_translator[mod_buss],
-            "Valve Info": r_v,
-            "Pulse Mode": pulse_mode,
-            "Pulse Flow Start": flow_start,
-            "Pulse Unit per Pulse": unit_per_pulse,
-            "Pulse Time Interval [25-3276ms]": pulse_time_interval,
-            "Totalizer #1 Mode": self.totalizer_status_translator[totalizer1_mode],
-            "Totalizer #1 Start Flow Condition": start_flow_condition1,
-            "Totalizer #1 Limit Volume": limit_volume1,
-            "Totalizer #1 Pow on Delay": pow_on_delay1,
-            "Totalizer #1 Autoreset Mode": autoreset_mode1,
-            "Totalizer #1 Autoreset Delay": autoreset_delay1,
-            "Totalizer #2 Mode": self.totalizer_status_translator[totalizer2_mode],
-            "Totalizer #2 Start Flow Condition": start_flow_condition2,
-            "Totalizer #2 Limit Volume": limit_volume2,
-            "Totalizer #2 Pow on Delay": pow_on_delay2,
-            "Totalizer #2 Autoreset Mode": autoreset_mode2,
-            "Totalizer #2 Autoreset Delay": autoreset_delay2,
+            dados[2][0]: dados[2][1],
+            dados[3][0]: dados[3][1],
+            dados[4][0]: dados[4][1],
+            dados[5][0]: dados[5][1],
+            dados[6][0]: dados[6][1],
+            dados[7][0]: dados[7][1],
+            #"Valve Info": r_v,
+            #"Pulse Mode": pulse_mode,
+            #"Pulse Flow Start": flow_start,
+            #"Pulse Unit per Pulse": unit_per_pulse,
+            #"Pulse Time Interval [25-3276ms]": pulse_time_interval,
+            #"Totalizer #1 Mode": self.totalizer_status_translator[totalizer1_mode],
+            #"Totalizer #1 Start Flow Condition": start_flow_condition1,
+            #"Totalizer #1 Limit Volume": limit_volume1,
+            #"Totalizer #1 Pow on Delay": pow_on_delay1,
+            #"Totalizer #1 Autoreset Mode": autoreset_mode1,
+            #"Totalizer #1 Autoreset Delay": autoreset_delay1,
+            #"Totalizer #2 Mode": self.totalizer_status_translator[totalizer2_mode],
+            #"Totalizer #2 Start Flow Condition": start_flow_condition2,
+            #"Totalizer #2 Limit Volume": limit_volume2,
+            #"Totalizer #2 Pow on Delay": pow_on_delay2,
+            #"Totalizer #2 Autoreset Mode": autoreset_mode2,
+            #"Totalizer #2 Autoreset Delay": autoreset_delay2,
         }
 
 
