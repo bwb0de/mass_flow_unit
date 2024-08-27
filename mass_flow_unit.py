@@ -58,6 +58,7 @@ class MassFlowUnit:
             self.conteudo_fluxo = 'Ar'
 
         self.fracao_de_fluxo = 100/self.fluxo_maximo
+        self.fila_execucao = [] #incluir
         
         self.alarm_st_translator = {
             "D": "Disabled",
@@ -149,6 +150,8 @@ class MassFlowUnit:
         fluxo, tempo = self.fila_execucao[0]
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self} definindo fluxo para {fluxo}")
+        #self.enviar_comandos(['DI', 'PI','M,D', f'SP,{abertura}', 'SP', 'V,M,A'])
+        self.enviar_comandos([f'SP,{fluxo}'])
         return tempo
     
     def modo_digital(self):
