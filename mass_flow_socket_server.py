@@ -1,32 +1,20 @@
 import time
 import socket
+import json
 
 from mass_flow_unit import MassFlowUnitTest
-from orquestrador_mass_flow import Orquestrador
+#from orquestrador_mass_flow_v3 import Orquestrador
+from orquestrador_mass_flow_v2 import Orquestrador
 
 taxa_de_transmissao = 9600
 
-mu1 = MassFlowUnitTest('COM3', 9600, 100, 'produto')
-mu2 = MassFlowUnitTest('COM4', 9600, 200, 'Ar')
-mu3 = MassFlowUnitTest('COM5', 9600, 200, 'Ar')
+def inicializar_orquestrador():
+    mu1 = MassFlowUnitTest('COM3', 9600, 100, 'produto')
+    mu2 = MassFlowUnitTest('COM4', 9600, 200, 'Ar')
+    mu3 = MassFlowUnitTest('COM5', 9600, 200, 'Ar')
+    o1 = Orquestrador([mu1, mu2, mu3])
+    return o1
 
-
-o1 = Orquestrador([mu1, mu2, mu3])
-
-lista_fluxo_nao_ar_tempo = [
-    (0,10),
-    (6,10),
-    (0,10),
-    (12,10),
-    (0,10),
-    (24,10),
-    (0,10),
-    (36,10),
-    (0,10),
-    (48,10),
-]
-
-o1.distribuir_fluxo_nas_unidades(lista_fluxo_nao_ar_tempo)
 
 mostrar_dados_recebidos = True
 
@@ -50,13 +38,17 @@ def handle_client(client_socket) -> str:
         data = client_socket.recv(1024).decode().strip()
         if not data:
             break
-        if data == 'sair': continue
+        if data == 'exit': continue
         if mostrar_dados_recebidos: print(f"··> {data}")
 
         comando = data.strip()
 
-
         if comando == "run":
+            lista_fluxo_nao_ar_tempo = None
+            with open('parametros.json', 'r') as arquivo_parametros:
+                lista_fluxo_nao_ar_tempo = json.loads(arquivo_parametros.read())
+            o1 = inicializar_orquestrador()
+            o1.distribuir_fluxo_nas_unidades(lista_fluxo_nao_ar_tempo)
             o1.executar_rotina()
             client_socket.send("executando procedimento...".encode())
             

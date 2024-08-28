@@ -14,6 +14,7 @@ class MassFlowUnitTest:
         self.conteudo_fluxo = conteudo_fluxo
         self.fracao_de_fluxo = 100/self.fluxo_maximo
         self.fila_execucao = [] #incluir
+        self.parar_rotina = None
 
     def __repr__(self) -> str:
         label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
@@ -24,6 +25,7 @@ class MassFlowUnitTest:
 
     def executar_acao_da_fila(self):
         if self.fila_execucao == []: return
+        self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self} definindo fluxo para {fluxo}")
@@ -45,6 +47,7 @@ class MassFlowUnit:
         self.taxa_de_transmissao = taxa_de_transmissao
         self.arquivo_de_rotina = None
         self.numero_equipamento = self.enviar_comando('MR,1')
+        self.parar_rotina = None
 
         if self.numero_equipamento in {'624643-1','608314-1'}:
             self.fluxo_maximo = 100
@@ -143,14 +146,14 @@ class MassFlowUnit:
         return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}: '
 
     def inserir_na_fila_execucao(self, script_ajustado_fluxo):
-        self.fila_execucao.extend(script_ajustado_fluxo)
+        self.fila_execucao = script_ajustado_fluxo
 
     def executar_acao_da_fila(self):
         if self.fila_execucao == []: return
+        self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self} definindo fluxo para {fluxo}")
-        #self.enviar_comandos(['DI', 'PI','M,D', f'SP,{abertura}', 'SP', 'V,M,A'])
         self.enviar_comandos([f'SP,{fluxo}'])
         return tempo
     

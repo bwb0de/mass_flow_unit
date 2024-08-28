@@ -1,5 +1,7 @@
-from mass_flow_unit import MassFlowUnitTest
 from orquestrador_mass_flow_v3 import Orquestrador
+from parametros import lista_fluxo_nao_ar_tempo
+from mass_flow_unit import MassFlowUnitTest
+
 
 taxa_de_transmissao = 9600
 
@@ -9,21 +11,6 @@ mu3 = MassFlowUnitTest('COM5', 9600, 200, 'Ar')
 
 o1 = Orquestrador([mu1, mu2, mu3])
 
-lista_fluxo_nao_ar_tempo = [
-    (0,10),
-    (6,10),
-    (0,10),
-    (12,10),
-    (0,10),
-    (24,10),
-    (0,10),
-    (36,10),
-    (0,10),
-    (48,10),
-]
 
 o1.distribuir_fluxo_nas_unidades(lista_fluxo_nao_ar_tempo)
 o1.executar_rotina()
-
-
-        
