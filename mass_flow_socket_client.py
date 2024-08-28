@@ -11,6 +11,8 @@ def start_client():
         if data_to_send.lower().strip() == 'sair':
             break
         client_socket.send(data_to_send.encode())
+        data = client_socket.recv(1024).decode().strip()
+        print(data)
     
     client_socket.close()
     

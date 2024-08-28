@@ -58,6 +58,7 @@ def handle_client(client_socket) -> str:
 
         if comando == "run":
             o1.executar_rotina()
+            client_socket.send("executando procedimento...".encode())
             
         elif comando == "check":
             data_to_send = str(o1.status_das_rotinas_em_execucao())
@@ -65,7 +66,7 @@ def handle_client(client_socket) -> str:
 
         elif comando == "stop":
             o1.interromper()
-            client_socket.send("Procedimento interrompido...".encode())
+            client_socket.send("procedimento interrompido...".encode())
 
 
         
