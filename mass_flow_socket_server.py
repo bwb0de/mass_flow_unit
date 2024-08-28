@@ -2,7 +2,7 @@ import time
 import socket
 
 from mass_flow_unit import MassFlowUnitTest
-from orquestrador_mass_flow_v2 import Orquestrador
+from orquestrador_mass_flow import Orquestrador
 
 taxa_de_transmissao = 9600
 
