@@ -1,7 +1,19 @@
 import time
 
-from threading import Thread
+from multiprocessing import Process
 from mass_flow_unit import MassFlowUnit
+
+
+def executa_subprocesso(objeto: MassFlowUnit):
+    n = 1
+    tempo_espera = objeto.executar_acao_da_fila()
+    time.sleep(tempo_espera)
+    while True:
+        n += 1
+        tempo_espera = objeto.executar_acao_da_fila()
+        if tempo_espera is None: break
+        time.sleep(tempo_espera)   
+
 
 class Orquestrador:
     def __init__(self, mass_flow_units:list=[], exp_max_flow=200) -> None:
@@ -58,47 +70,21 @@ class Orquestrador:
 
 
     def executar_rotina(self):
-        def executa_subprocesso(mass_flow_unit: MassFlowUnit):
-            n = 1
-            tempo_espera = mass_flow_unit.executar_acao_da_fila()
-            time.sleep(tempo_espera)
-
-            while True:
-                manter_execucao = True
-                n += 1
-                tempo_espera = mass_flow_unit.executar_acao_da_fila()
-                if tempo_espera is None: break
-                intervalo_verificacao_execucao = tempo_espera
-                while intervalo_verificacao_execucao:
-                    intervalo_verificacao_execucao -= 1
-                    time.sleep(1)
-                    if mass_flow_unit.parar_rotina:
-                        manter_execucao = False
-                        break
-                if not manter_execucao:
-                    print(f'{mass_flow_unit} interrompendo execução da rotina...')
-                    break
-            
-
         print(f'Executando rotina: {self.script_fluxo}'); print('')
         for unidade in self.unidades:
             unidade.modo_digital()
 
-        try:
-            self.processos = []
+        self.processos = []
 
-            for unidade in self.unidades:
-                processo = Thread(target=executa_subprocesso, args=(unidade,))
-                self.processos.append(processo)
-                processo.start()
-        except KeyboardInterrupt:
-            self.interromper()
+        for unidade in self.unidades:
+            processo = Process(target=executa_subprocesso, args=(unidade,))
+            self.processos.append(processo)
+            processo.start()
 
     def status_das_rotinas_em_execucao(self):
         return [p.is_alive() for p in self.processos]
 
     def interromper(self):
-        for unit in self.unidades:
-            unit.parar_rotina = True
         print('interrompendo...')
+        return [p.terminate() for p in self.processos]
 
