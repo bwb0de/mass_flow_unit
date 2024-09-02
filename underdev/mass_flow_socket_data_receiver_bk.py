@@ -1,5 +1,6 @@
 import socket
 
+ipvh = {}
 
 def start_server(mostrar_dados_recebido=True):
     try:
