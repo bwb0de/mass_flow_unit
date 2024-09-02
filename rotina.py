@@ -10,10 +10,10 @@ with open('parametros.json', 'r') as arquivo_parametros:
 
 taxa_de_transmissao = 9600
 
-mu1 = MassFlowUnit('COM3', taxa_de_transmissao)
-mu2 = MassFlowUnit('COM4', taxa_de_transmissao)
-mu3 = MassFlowUnit('COM5', taxa_de_transmissao)
-mu4 = MassFlowUnit('COM5', taxa_de_transmissao)
+mu1 = MassFlowUnit('COM5', taxa_de_transmissao)
+mu2 = MassFlowUnit('COM6', taxa_de_transmissao)
+mu3 = MassFlowUnit('COM7', taxa_de_transmissao)
+mu4 = MassFlowUnit('COM8', taxa_de_transmissao)
 
 
 if __name__ == '__main__':
