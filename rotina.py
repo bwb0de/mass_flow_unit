@@ -1,7 +1,7 @@
 import json
 
 from mass_flow_unit import MassFlowUnit
-from orquestrador_mass_flow_parallel import Orquestrador
+from mass_flow_orquestrator_parallel import Orquestrador
 
 lista_fluxo_nao_ar_tempo = None
 with open('parametros.json', 'r') as arquivo_parametros:

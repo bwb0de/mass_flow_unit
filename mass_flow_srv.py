@@ -3,11 +3,15 @@ import socket
 import json
 
 from mass_flow_unit import MassFlowUnit
-from orquestrador_mass_flow_parallel import Orquestrador
+from mass_flow_orquestrator_parallel import Orquestrador
 
 taxa_de_transmissao = 9600
 
 def inicializar_orquestrador():
+    #mass_flow_unit1 = MassFlowUnitTest('COM5', taxa_de_transmissao, 200, 'Ar')
+    #mass_flow_unit2 = MassFlowUnitTest('COM6', taxa_de_transmissao, 200, 'Ar')
+    #mass_flow_unit3 = MassFlowUnitTest('COM7', taxa_de_transmissao, 100, 'produto')
+    #mass_flow_unit4 = MassFlowUnitTest('COM8', taxa_de_transmissao, 100, 'produto')    
     mass_flow_unit1 = MassFlowUnit('COM5', taxa_de_transmissao)
     mass_flow_unit2 = MassFlowUnit('COM6', taxa_de_transmissao)
     mass_flow_unit3 = MassFlowUnit('COM7', taxa_de_transmissao)
