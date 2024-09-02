@@ -12,6 +12,6 @@ def enviar_dados(dados):
     
 
 if __name__ == "__main__":
-    for n in range(0,100):
+    for n in range(0,10000000):
         enviar_dados(random.randint(2,100))
-        time.sleep(0.03)
+        time.sleep(0.25)
