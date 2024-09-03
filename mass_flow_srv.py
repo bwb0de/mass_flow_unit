@@ -7,6 +7,9 @@ from mass_flow_orquestrator_parallel import Orquestrador
 
 taxa_de_transmissao = 9600
 
+MASS_FLOW_HOST = '127.0.0.1'
+MASS_FLOW_PORT = 11111
+
 def inicializar_orquestrador():
     #mass_flow_unit1 = MassFlowUnitTest('COM5', taxa_de_transmissao, 200, 'Ar')
     #mass_flow_unit2 = MassFlowUnitTest('COM6', taxa_de_transmissao, 200, 'Ar')
@@ -24,8 +27,8 @@ mostrar_dados_recebidos = True
 
 def start_server(mostrar_dados_recebido=True):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host = '127.0.0.1'
-    port = 11111
+    host = MASS_FLOW_HOST
+    port = MASS_FLOW_PORT
     server_socket.bind((host, port))
     server_socket.listen(5)
     print(f"Servidor MassFlow escutando em {host}:{port}")
