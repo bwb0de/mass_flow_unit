@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+<form name="contact" action="/processar_contato" method="POST">
+    <input type="hidden" name="_csrf" value="{{csrf_token}}">    
+        <div>
+            <div class="flex flex-row">
+                <div></div>
+                <div class="container_do_formulario">
+    
+                    <h1 class="titulo_documento">Ramal: 3107 8280</h1>
+
+                    <div style="margin-left: 32%; margin-right: 32%; margin-top: -3%;">
+                        <a target="_blank" href="http://wa.me/556131078228">
+                            <img style="margin-left: 18%;" src="{{ url_for('static', filename='img/qr_aline.png') }}"><br>
+                            <p style="margin-top: -8%; margin-left: -1%;">Aline Ione</p>
+                        </a>
+                    </div>
+
+                    <div style="margin-left: 32%; margin-right: 32%;">
+                        <a target="_blank" href="http://wa.me/556131078244">
+                            <img style="margin-left: 18%;" src="{{ url_for('static', filename='img/qr_dan.png') }}"><br>
+                            <p style="margin-top: -8%; margin-left: -1%;">Daniel Cruz</p>
+                        </a>
+                    </div>
+                    
+                </div>
+                <br><br><br><br><br><br>
+            </div>
+        </div>
+</form>
+
+{% endblock %}
+

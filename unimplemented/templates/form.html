@@ -1,0 +1,357 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+<form id="formulario_corrente" nome="formulario_corrente" action="/processar_formulario/{{ form_ref }}" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+
+    <div class="container_do_formulario">
+        <h1 class="titulo_documento"> {{ titulo }} </h1>
+        <h2 class="lead_documento"> {{ descricao }}</h2>
+
+        {% for campo in campos %}
+            {% if campo.num_ops %}
+                <script>
+                    numero_opcoes.set('{{ campo.id }}', {{ campo.num_ops }})
+                </script>
+            {% endif %}
+
+            {% if campo.escondido %}
+                <script>
+                    elementos_escondidos.push('{{ campo.id }}')
+                </script>
+            {% endif %}
+
+            {% if campo.mostrar_elementos_relacionados %}
+                {% for elem_relacionado in campo.mostrar_elementos_relacionados %}
+                    <script>
+                        mostrar_elementos_relacionados.push('{{ elem_relacionado }}')
+                    </script>
+                {% endfor %}
+            {% endif %}
+
+            {% if campo.esconder_elementos_relacionados %}
+                {% for elem_relacionado in campo.esconder_elementos_relacionados %}
+                    <script>
+                        esconder_elementos_relacionados.push('{{ elem_relacionado }}')
+                    </script>
+                {% endfor %}
+            {% endif %}
+
+            <div id="{{ campo.id }}_elemento_completo" class="items-center align-middle text-center flex-grow p-5" "{{ campo.tamanho }}">
+                {% if campo.isBlock %}
+                    <div class="bg-gray-200">
+                        <script>
+                            blocos.push('{{ campo.id }}');
+                            campos_dos_blocos.set('{{ campo.id }}', new Array());
+                            campos_concisos.set('{{ campo.id }}', new Array());
+                            campos_dos_blocos_data.set('{{ campo.id }}', new Map());
+                            campos_dos_blocos_data_main_v_list.set('{{ campo.id }}', new Array());
+                            current_blk_name = '{{ campo.id }}';
+                        </script>
+
+                        <div id="{{ campo.id }}_title">
+                            <h3 class="text-xl text-gray-700 bg-gray-200 pt-10 pb-10">
+                                <b>{{ campo.etiqueta }}</b>
+                            </h3>
+                        </div>
+
+                        <div class="bg-grey-200 flex-grow" style="margin-left: 7.5%;" id="{{ campo.id }}_table">
+                        </div>
+                        
+                        <div class="flex-grow items-center align-middle text-center pb-10 pt-10">
+                            <button style="margin-left: 45.1%;" id="novo_btn_{{ campo.id }}" type="button" onclick="mostrar_subform('{{ campo.id }}');" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">
+                                Iniciar registro
+                            </button>
+                        </div>
+
+                        <div id="{{ campo.id }}_block" nome="{{ campo.nome }}_block">
+                            {% for q_elem in campo.q %}
+                                {% if q_elem.obrigatorio %}
+                                    <script>
+                                        campos_obrigatorios_dos_blocos.add('{{ q_elem.id }}');
+                                    </script>
+                                {% endif %}
+
+                                <div class="items-center align-middle text-center flex-grow" "{{ q_elem.tamanho }}">
+                                    {% if q_elem.isSubt1 %}
+                                        <h3 class="text-xl text-gray-700"><b>{{ q_elem.etiqueta }}</b></h3>
+                                    {% endif %}
+
+                                    {% if q_elem.isSubt2 %}
+                                        <h4 class="text-xl text-gray-700"><b>{{ q_elem.etiqueta }}</b></h4>
+                                    {% endif %}
+
+                                    {% if q_elem.isTextarea %}
+                                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{ q_elem.id }}"><b>{{ q_elem.etiqueta }}</b>:</label></div>
+                                        <textarea id="{{ q_elem.id }}" name="{{ q_elem.nome }}" rows="10" class="bg-gray-50" style="width: 75%;" placeholder="{{ q_elem.dica }}"></textarea>
+                                    {% endif %}
+
+                                    {% if q_elem.isRadioText %}
+                                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{ q_elem.id }}"><b>{{ q_elem.etiqueta }}</b>:</label></div>
+                                        <div>
+                                            {% for option in q_elem.options %}
+                                                <input style="width:25px;" type="radio" id="{{ option.item_id }}" name="{{ option.item_nome }}" value="{{ option.item_val }}">
+                                                <div style="margin-top: -20px; margin-left: 25px;">{{ option.item_val }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        <div>
+                                            <input type="{{ q_elem.tipo }}" id="{{ q_elem.id }}" name="{{ q_elem.nome }}">
+                                        </div>
+                                    {% endif %}
+
+                                    {% if q_elem.isEscala %}
+                                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{ q_elem.id }}"><b>{{ q_elem.etiqueta }}</b>:</label></div>
+                                        <div>
+                                            {% for option in q_elem.options %}
+                                                <input style="width:25px;" type="radio" id="{{ option.item_id }}" name="{{ option.item_nome }}" value="{{ option.item_val }}">{{ option.item_val }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if q_elem.isRadio %}
+                                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{ q_elem.id }}"><b>{{ q_elem.etiqueta }}</b>:</label></div>
+                                        <div class="text-left" style="margin-left: 13.5%;">
+                                            {% if q_elem.horizontal %}
+                                                {% for option in q_elem.options %}
+                                                    <script>
+                                                        campos_dos_blocos.get(current_blk_name).push('{{ option.item_id }}')
+                                                    </script>
+                                                    <input style="width:25px;" type="radio" class="bg-gray-50" id="{{option.item_id}}" name="{{option.item_nome}}" value="{{option.item_val}}">{{option.item_val}}
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for option in q_elem.options %}
+                                                    <script>
+                                                        campos_dos_blocos.get(current_blk_name).push('{{ option.item_id }}');
+                                                    </script>
+                                                    <input style="width:25px;" type="radio" class="bg-gray-50" id="{{ option.item_id }}" name="{{ option.item_nome }}" value="{{ option.item_val }}"><div style="margin-top: -23px; margin-left: 25px;">{{ option.item_val }}</div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}                                            
+
+                                    {% if q_elem.isCheckbox %}
+                                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{ q_elem.id }}"><b>{{ q_elem.etiqueta }}</b>:</label></div>
+                                        <div class="text-left" style="margin-left: 13.5%;">
+                                            {% if q_elem.horizontal %}
+                                                {% for option in q_elem.options %}
+                                                    <script>
+                                                        campos_dos_blocos.get(current_blk_name).push('{{ option.item_id }}')
+                                                    </script>
+                                                    <input style="width:25px;" type="checkbox" class="bg-gray-50" id="{{option.item_id}}" name="{{option.item_nome}}" value="{{option.item_val}}">{{option.item_val}}
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for option in q_elem.options %}
+                                                    <script>
+                                                        campos_dos_blocos.get(current_blk_name).push('{{ option.item_id }}');
+                                                    </script>
+                                                    <input style="width:25px;" type="checkbox" class="bg-gray-50" id="{{ option.item_id }}" name="{{ option.item_nome }}" value="{{ option.item_val }}"><div style="margin-top: -23px; margin-left: 25px;">{{ option.item_val }}</div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}      
+                                    
+                                    {% if q_elem.isList %}
+                                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{q_elem.id}}"><b>{{q_elem.etiqueta}}</b>:</label></div>
+                                            <div class="text-left" style="margin-left: 13.5%;">
+                                                <select id="{{q_elem.id}}" name="{{q_elem.nome}}">
+                                                {% for option in q_elem.options %}
+                                                    <option style="width:25px;" type="checkbox" class="bg-gray-50" id="{{option.item_id}}" name="{{option.item_nome}}" value="{{option.item_val}}">{{option.item_val}}</option>
+                                                {% endfor %}
+                                                </select>
+                                            </div>
+                                    {% endif %}
+                                            
+
+                                    {% if q_elem.isNumber %}
+                                    <script>
+                                        campos_dos_blocos.get(current_blk_name).push('{{q_elem.id}}')
+                                    </script>
+                                
+                                    <div>
+                                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{q_elem.id}}"><b>{{q_elem.etiqueta}}</b>:</label></div>
+                                            <div>
+                                                <input type="{{q_elem.tipo}}" class="p-2 bg-gray-50 mb-1" style="width: 75%;" id="{{q_elem.id}}" name="{{q_elem.nome}}" placeholder="{{q_elem.dica}}">
+                                            </div>
+                                    </div>
+                                    {% endif %}          
+
+                                    {% if q_elem.isDate %}
+                                        <script>
+                                            campos_dos_blocos.get(current_blk_name).push('{{q_elem.id}}')
+                                        </script>
+                                        <div class="text-left" style="margin-left: 12.5%;">
+                                        <div ><label for="{{q_elem.id}}"><b>{{q_elem.etiqueta}}</b>:</label></div>
+                                        <div>
+                                            <input type="{{q_elem.tipo}}" class="p-2 bg-gray-50 mb-1" style="width: 20%; margin-left: 0px;" id="{{q_elem.id}}" name="{{q_elem.nome}}" placeholder="{{q_elem.dica}}">
+                                        </div>
+                                        </div>
+                                    {% endif %}          
+
+                                    {% if q_elem.isText %}
+                                        <script>
+                                            campos_dos_blocos.get(current_blk_name).push('{{q_elem.id}}')
+                                        </script>
+
+                                            <div>
+                                            <div class="text-left" style="margin-left: 12.5%;"><label for="{{q_elem.id}}"><b>{{q_elem.etiqueta}}</b>:</label></div>
+                                                <div>
+                                                    <input type="{{q_elem.tipo}}" class="p-2 bg-gray-50 mb-1" style="width: 75%;" id="{{q_elem.id}}" name="{{q_elem.nome}}" placeholder="{{q_elem.dica}}">
+                                                </div>
+                                            </div>
+                                    {% endif %}
+
+                                </div><br><br>
+                            {% endfor %}
+
+                            <div class="pb-10">
+                                <button type="button" id="adicionar_{{campo.id}}" onclick="adicionar_registro('{{campo.id}}');" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md" >Inserir</button>   
+                                <button type="button" id="limpar_tudo_{{campo.id}}" onclick="limpar_tudo_todos_os_campos_e_informacoes_do_subform('{{campo.id}}');" class="bg-red-800 text-white hover:text-teal hover:bg-red-600 p-1 px-4 rounded-md" >Limpar tudo</button>
+                            </div>
+                            </div>
+                    </div>
+                {% endif %}
+
+                {% if campo.isSubt1 %}
+                    <h3 class="text-xl text-gray-700"><b>{{ campo.etiqueta }}</b></h3>
+                {% endif %}
+
+                {% if campo.isSubt2 %}
+                    <h4 class="text-xl text-gray-700"><b>{{ campo.etiqueta }}</b></h4>
+                {% endif %}
+
+                {% if campo.isTextarea %}
+                    <div class="text-left" style="margin-left: 12.5%;"><label for="{{ campo.id }}"><b>{{ campo.etiqueta }}</b>:</label></div>
+                    <textarea id="{{ campo.id }}" name="{{ campo.nome }}" rows="10" class="bg-gray-50" style="width: 75%;" placeholder="{{ campo.dica }}" {% if campo.obrigatorio %}required{% endif %}></textarea>
+                {% endif %}
+
+                {% if campo.isRadioText %}
+                    <div class="text-left" style="margin-left: 12.5%;"><label for="{{ campo.id }}"><b>{{ campo.etiqueta }}</b>:</label></div>
+                    <div>
+                        {% for option in campo.options %}
+                            <input style="width:25px;" type="radio" id="{{ option.item_id }}" name="{{ option.item_nome }}" value="{{ option.item_val }}">
+                            <div style="margin-top: -20px; margin-left: 25px;">{{ option.item_val }}</div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <input type="{{ campo.tipo }}" id="{{ campo.id }}" name="{{ campo.nome }}">
+                    </div>
+                {% endif %}
+
+                {% if campo.isEscala %}
+                    <div class="text-left" style="margin-left: 12.5%;"><label for="{{ campo.id }}"><b>{{ campo.etiqueta }}</b>:</label></div>
+                    <div>
+                        {% for option in campo.options %}
+                            <input style="width:25px;" type="radio" id="{{ option.item_id }}" name="{{ option.item_nome }}" value="{{ option.item_val }}">{{ option.item_val }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if campo.isRadio %}
+                    <div class="text-left" style="margin-left: 12.5%;"><label for="{{ campo.id }}"><b>{{ campo.etiqueta }}</b>:</label></div>
+                    <div class="text-left" style="margin-left: 13.5%;">
+                        {% if campo.horizontal %}
+                            {% for c in campo.options %}
+                                <script>
+                                    campos_dos_blocos.get(current_blk_name).push('{{ c.item_id }}')
+                                </script>
+                                <input style="width:25px;" type="radio" class="bg-gray-50" id="{{c.item_id}}" name="{{c.item_nome}}" value="{{c.item_val}}" onchange="checar_elementos_relacionados('{{c.item_val}}');" {% if campo.obrigatorio %}required{% endif %}>{{c.item_val}}
+                            {% endfor %}
+                        {% else %}
+                            {% for c in campo.options %}
+                                <script>
+                                    campos_dos_blocos.get(current_blk_name).push('{{ c.item_id }}');
+                                </script>
+                                <input style="width:25px;" type="radio" class="bg-gray-50" id="{{ c.item_id }}" name="{{ c.item_nome }}" value="{{ c.item_val }}" onchange="checar_elementos_relacionados('{{c.item_val}}');" {% if campo.obrigatorio %}required{% endif %}><div style="margin-top: -23px; margin-left: 25px;">{{ c.item_val }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}                                            
+
+                {% if campo.isCheckbox %}
+                    <div class="text-left" style="margin-left: 12.5%;"><label for="{{ campo.id }}"><b>{{ campo.etiqueta }}</b>:</label></div>
+                    <div class="text-left" style="margin-left: 13.5%;">
+                        {% if campo.horizontal %}
+                            {% for option in campo.options %}
+                                <script>
+                                    campos_dos_blocos.get(current_blk_name).push('{{ option.item_id }}')
+                                </script>
+                                <input style="width:25px;" type="checkbox" class="bg-gray-50" id="{{option.item_id}}" name="{{option.item_nome}}" value="{{option.item_val}}" onchange="checar_elementos_relacionados('{{option.item_val}}');" {% if campo.obrigatorio %}required{% endif %}>{{option.item_val}}
+                            {% endfor %}
+                        {% else %}
+                            {% for option in campo.options %}
+                                <script>
+                                    campos_dos_blocos.get(current_blk_name).push('{{ option.item_id }}');
+                                </script>
+                                <input style="width:25px;" type="checkbox" class="bg-gray-50" id="{{ option.item_id }}" name="{{ option.item_nome }}" value="{{ option.item_val }}" onchange="checar_elementos_relacionados('{{option.item_val}}');" {% if campo.obrigatorio %}required{% endif %}><div style="margin-top: -23px; margin-left: 25px;">{{ option.item_val }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}      
+                
+                {% if campo.isList %}
+                    <div class="text-left" style="margin-left: 12.5%;"><label for="{{campo.id}}"><b>{{campo.etiqueta}}</b>:</label></div>
+                        <div class="text-left" style="margin-left: 13.5%;">
+                            <select id="{{campo.id}}" name="{{campo.nome}}">
+                            {% for option in campo.options %}
+                                <option style="width:25px;" type="checkbox" class="bg-gray-50" id="{{option.item_id}}" name="{{option.item_nome}}" value="{{option.item_val}}">{{option.item_val}}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                {% endif %}
+                        
+
+                {% if campo.isNumber %}
+                    <script>
+                        campos_dos_blocos.get(current_blk_name).push('{{campo.id}}')
+                    </script>
+                
+                    <div>
+                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{campo.id}}"><b>{{campo.etiqueta}}</b>:</label></div>
+                            <div>
+                                <input type="{{campo.tipo}}" class="p-2 bg-gray-50 mb-1" style="width: 75%;" id="{{campo.id}}" name="{{campo.nome}}" placeholder="{{campo.dica}}" {% if campo.obrigatorio %}required{% endif %}>
+                            </div>
+                    </div>
+                {% endif %}          
+
+                {% if campo.isDate %}
+                    <script>
+                        campos_dos_blocos.get(current_blk_name).push('{{campo.id}}')
+                    </script>
+                    <div class="text-left" style="margin-left: 12.5%;">
+                    <div ><label for="{{campo.id}}"><b>{{campo.etiqueta}}</b>:</label></div>
+                    <div>
+                        <input type="{{campo.tipo}}" class="p-2 bg-gray-50 mb-1" style="width: 20%; margin-left: 0px;" id="{{campo.id}}" name="{{campo.nome}}" placeholder="{{campo.dica}}" {% if campo.obrigatorio %}required{% endif %}>
+                    </div>
+                    </div>
+                {% endif %}          
+
+                {% if campo.isText %}
+                    <script>
+                        campos_dos_blocos.get(current_blk_name).push('{{campo.id}}')
+                    </script>
+
+                        <div>
+                        <div class="text-left" style="margin-left: 12.5%;"><label for="{{campo.id}}"><b>{{campo.etiqueta}}</b>:</label></div>
+                            <div>
+                                <input type="{{campo.tipo}}" class="p-2 bg-gray-50 mb-1" style="width: 75%;" id="{{campo.id}}" name="{{campo.nome}}" placeholder="{{campo.dica}}" {% if campo.obrigatorio %}required{% endif %}>
+                            </div>
+                        </div>
+                {% endif %}    
+
+            </div>
+        {% endfor %}
+    </div>
+    
+<div style="height: 40%;"></div>
+    <div class="items-center align-middle text-center flex-grow">
+        <button form="formulario_corrente" id="submeter_formulario" type="submit" onclick="enviar_formulario();" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">Submeter</button>
+    </div>
+
+</form>
+
+<br><br><br><br>
+
+
+
+{% endblock %}

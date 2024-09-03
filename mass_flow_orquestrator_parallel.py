@@ -3,16 +3,21 @@ import time
 from multiprocessing import Process
 from mass_flow_unit import MassFlowUnit
 
+from ipvh_srv import set_value, get_value
+
 
 def executa_subprocesso(objeto: MassFlowUnit):
     n = 1
     tempo_espera = objeto.executar_acao_da_fila()
     time.sleep(tempo_espera)
+    set_value(objeto, objeto.checar_execucao())
     while True:
         n += 1
         tempo_espera = objeto.executar_acao_da_fila()
         if tempo_espera is None: break
-        time.sleep(tempo_espera)   
+        time.sleep(tempo_espera)
+        set_value(objeto, objeto.checar_execucao())   
+
 
 
 class Orquestrador:
@@ -82,7 +87,16 @@ class Orquestrador:
             processo.start()
 
     def status_das_rotinas_em_execucao(self):
-        return [p.is_alive() for p in self.processos]
+        retorno = []
+        for unit in self.unidades:
+            retorno.append(get_value(unit))
+        return retorno
+
+    def status_equipamentos(self):
+        retorno = []
+        for unit in self.unidades:
+            retorno.append(unit.obter_estado_equipamento())
+        return retorno
 
     def interromper(self):
         print('interrompendo...')

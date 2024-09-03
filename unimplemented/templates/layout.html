@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plataforma de registro e consulta de informações de assistência estudantil, FUP/UnB...">
+    <meta name="author" content="Daniel Cruz (@bwb0de)">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pearl_style_compilado.min.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <title>Assistência Estudantil</title>
+</head>
+<body>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/my_script.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/subform.js') }}"></script>
+
+        {% include 'navbar.html' %}
+
+    <div class='container_do_corpo_da_pagina'>
+        {% block page_info %}{% endblock %}
+    </div>
+
+        {% include 'footer.html' %}
+
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/subforms_init.js') }}"></script>
+
+</body>
+</html>        

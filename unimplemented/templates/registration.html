@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+<div id="etdinfo"></div>
+
+<form name="registration" action="/processar_registro" onsubmit="return validate()" method="POST">
+    <input type="hidden" name="_csrf" value="{{csrf_token}}">
+    <div>
+        <div class="flex flex-row">
+            <div></div>
+            <div class="container_do_formulario">
+
+                <h1 class="titulo_documento">Solicitação de registro...</h1>
+                
+                <input id="username" type="text" name="username" class="input_texto" placeholder="Alias ou nickname desejado..." required><br>
+                <input id="realname" type="text" name="realname" class="input_texto" placeholder="Nome completo" required><br>
+                <input id="eml" type="text" name="eml" class="input_texto" placeholder="Endereço de correio eletrônico..." required><br>
+                <input id="mobile" type="text" name="mobile" class="input_texto" placeholder="Telefone..." required><br>
+                
+                <input id="pwd_set" type="password" name="pwd_set" class="input_texto" placeholder="Definir senha de acesso..." required><br>
+                <input id="pwd_confirmation" type="password" name="pwd_confirmation" class="input_texto" placeholder="Confirmar senha de acesso..." required><br>
+
+                <textarea id='justificativa' placeholder="Apresente uma justificativa para concessão do acesso ao serviço..." name='justificativa' rows="10" class="input_paragrafo" required></textarea><br>
+
+                <button type="submit" class="btn_padrao"> Submeter </button>
+            </div>
+            <div></div>
+        </div>
+    </div>
+    <script>
+        function validate() {
+            if ( document.getElementById('pwd_set').value != document.getElementById("pwd_confirmation").value ) {
+                alert("Senhas fornecidas não coincidem..."); 
+                return false;
+            }
+        }
+
+    </script>
+</form>
+
+{% endblock %}
+

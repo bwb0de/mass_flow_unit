@@ -15,27 +15,60 @@ class MassFlowUnitTest:
         self.fracao_de_fluxo = 100/self.fluxo_maximo
         self.fila_execucao = [] #incluir
         self.parar_rotina = None
+        self.etapa_execucao = 0
 
     def __repr__(self) -> str:
         label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
-        return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}: '
+        return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}'
 
     def inserir_na_fila_execucao(self, script_ajustado_fluxo):
-        self.fila_execucao.extend(script_ajustado_fluxo)
+        self.etapa_execucao = 0
+        self.fila_execucao = script_ajustado_fluxo
 
     def executar_acao_da_fila(self):
-        if self.fila_execucao == []: return
+        if self.fila_execucao == []: 
+            self.fechar_fluxo()
+            return
+        self.etapa_execucao += 1
         self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
         self.fila_execucao = self.fila_execucao[1:]
-        print(f"{self} definindo fluxo para {fluxo}")
+        print(f"{self}: definindo fluxo para {fluxo}")
         return tempo
-    
+
+
+    def checar_execucao(self):
+        return f'{self}: executando etapa {self.etapa_execucao}, com fluxo {self.fluxo_corrente}...'
+
     def modo_digital(self):
-        print(f'{self} entrando em modo digital com válvula no automático...')
+        print(f'{self}: entrando em modo digital com válvula no automático...')
 
     def fechar_fluxo(self):
-        print(f'{self} fechando fluxo...')
+        print(f'{self}: fechando fluxo...')
+
+    def obter_estado_equipamento(self):
+        resposta = {
+            "Mass Flow": "lorem ysilon",
+            "Volumetric Flow": "lorem ysilon",
+            "Total1 MEU": "lorem ysilon",
+            "Total2 MEU": "lorem ysilon",
+            "Temperatura Gás": "lorem ysilon", #Firehaint?
+            "Pressão Gás": "lorem ysilon",
+            "Situação Alarme Flow": "lorem ysilon",
+            "Situação Alarme Temperatura": "lorem ysilon",
+            "Situação Alarme Pressão": "lorem ysilon",
+            "Alarm Event Register": "lorem ysilon", #Tradutor hexcode
+            "Diagnostic Event Register": "lorem ysilon", #Tradutor hexcode
+            "Gás Index": "lorem ysilon",
+            "Gás Name": "lorem ysilon",
+            "Current Mass Unit":"lorem ysilon",
+            "Current Volumetric Unit": "lorem ysilon",
+            "Analog Output": "lorem ysilon",
+            "ModBuss": "lorem ysilon"
+        }
+
+        return resposta
+
 
 
     
@@ -48,8 +81,7 @@ class MassFlowUnit:
         self.arquivo_de_rotina = None
         self.numero_equipamento = self.enviar_comando('MR,1')
         self.parar_rotina = None
-
-        print(self.numero_equipamento)
+        self.etapa_execucao = 0
 
         if self.numero_equipamento in {'624643-1','608314-1'}:
             self.fluxo_maximo = 100
@@ -145,28 +177,33 @@ class MassFlowUnit:
 
     def __repr__(self) -> str:
         label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
-        return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}: '
+        return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}'
 
     def inserir_na_fila_execucao(self, script_ajustado_fluxo):
+        self.etapa_execucao = 0
         self.fila_execucao = script_ajustado_fluxo
 
     def executar_acao_da_fila(self):
         if self.fila_execucao == []: 
             self.fechar_fluxo()
             return
+        self.etapa_execucao += 1
         self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
         self.fila_execucao = self.fila_execucao[1:]
-        print(f"{self} definindo fluxo para {fluxo}")
+        print(f"{self}: definindo fluxo para {fluxo}")
         self.enviar_comandos([f'SP,{fluxo}'])
         return tempo
     
+    def checar_execucao(self):
+        return f'{self}: executando etapa {self.etapa_execucao}, com fluxo {self.fluxo_corrente}...'
+
     def modo_digital(self):
-        print(f'{self} entrando em modo digital com válvula no automático...')
+        print(f'{self}: entrando em modo digital com válvula no automático...')
         self.enviar_comandos(['M,D', 'SP,0.0', 'SP', 'V,M,A'])
 
     def fechar_fluxo(self):
-        print(f'{self} fechando fluxo...')
+        print(f'{self}: fechando fluxo...')
         self.enviar_comandos(['V,M,C'])
 
     def enviar_comandos(self, commandos: list):
