@@ -49,6 +49,8 @@ class MassFlowUnit:
         self.numero_equipamento = self.enviar_comando('MR,1')
         self.parar_rotina = None
 
+        print(self.numero_equipamento)
+
         if self.numero_equipamento in {'624643-1','608314-1'}:
             self.fluxo_maximo = 100
         elif self.numero_equipamento in {'624644-1','608315-1'}:
@@ -149,7 +151,9 @@ class MassFlowUnit:
         self.fila_execucao = script_ajustado_fluxo
 
     def executar_acao_da_fila(self):
-        if self.fila_execucao == []: return
+        if self.fila_execucao == []: 
+            self.fechar_fluxo()
+            return
         self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
         self.fila_execucao = self.fila_execucao[1:]

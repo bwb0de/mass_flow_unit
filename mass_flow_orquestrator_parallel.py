@@ -86,5 +86,7 @@ class Orquestrador:
 
     def interromper(self):
         print('interrompendo...')
+        for unit in self.unidades:
+            unit.fechar_fluxo()
         return [p.terminate() for p in self.processos]
 

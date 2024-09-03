@@ -41,12 +41,12 @@ def start_server(mostrar_dados_recebido=True):
 
 def handle_client(client_socket) -> str:
     global mostrar_dados_recebidos
+    o1 = inicializar_orquestrador()
+
     while True:
         data = client_socket.recv(1024).decode().strip()
         if not data:
             break
-        if data == 'exit': continue
-        if mostrar_dados_recebidos: print(f"··> {data}")
 
         comando = data.strip()
 
@@ -66,6 +66,9 @@ def handle_client(client_socket) -> str:
         elif comando == "stop":
             o1.interromper()
             client_socket.send("procedimento interrompido...".encode())
+
+        else:
+            client_socket.send(" ".encode())
 
 
         
