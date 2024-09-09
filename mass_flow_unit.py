@@ -16,6 +16,7 @@ class MassFlowUnitTest:
         self.fila_execucao = [] #incluir
         self.parar_rotina = None
         self.etapa_execucao = 0
+        self.fluxo_corrente = None
 
     def __repr__(self) -> str:
         label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
@@ -32,6 +33,7 @@ class MassFlowUnitTest:
         self.etapa_execucao += 1
         self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
+        self.fluxo_corrente = fluxo
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self}: definindo fluxo para {fluxo}")
         return tempo
@@ -82,6 +84,7 @@ class MassFlowUnit:
         self.numero_equipamento = self.enviar_comando('MR,1')
         self.parar_rotina = None
         self.etapa_execucao = 0
+        self.fluxo_corrente = None
 
         if self.numero_equipamento in {'624643-1','608314-1'}:
             self.fluxo_maximo = 100
@@ -190,6 +193,7 @@ class MassFlowUnit:
         self.etapa_execucao += 1
         self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
+        self.fluxo_corrente = fluxo
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self}: definindo fluxo para {fluxo}")
         self.enviar_comandos([f'SP,{fluxo}'])

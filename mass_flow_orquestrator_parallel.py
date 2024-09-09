@@ -5,20 +5,7 @@ from mass_flow_unit import MassFlowUnit
 
 from ipvh_srv import set_value, get_value
 
-
-def executa_subprocesso(objeto: MassFlowUnit):
-    n = 1
-    tempo_espera = objeto.executar_acao_da_fila()
-    time.sleep(tempo_espera)
-    set_value(objeto, objeto.checar_execucao())
-    while True:
-        n += 1
-        tempo_espera = objeto.executar_acao_da_fila()
-        if tempo_espera is None: break
-        time.sleep(tempo_espera)
-        set_value(objeto, objeto.checar_execucao())   
-
-
+status={}
 
 class Orquestrador:
     def __init__(self, mass_flow_units:list=[], exp_max_flow=200) -> None:
@@ -36,6 +23,7 @@ class Orquestrador:
         self.script_fluxo = []
         self.script_ajustado_fluxo_tempo_produto = []
         self.script_ajustado_fluxo_tempo_ar = []
+        self.unit_status = {}
 
 
     @property
@@ -82,14 +70,15 @@ class Orquestrador:
         self.processos = []
 
         for unidade in self.unidades:
-            processo = Process(target=executa_subprocesso, args=(unidade,))
+            processo = Process(target=executa_subprocesso, args=(unidade, ))
             self.processos.append(processo)
             processo.start()
 
     def status_das_rotinas_em_execucao(self):
         retorno = []
         for unit in self.unidades:
-            retorno.append(get_value(unit))
+            pass
+            #retorno.append(status[unit.numero_equipamento])
         return retorno
 
     def status_equipamentos(self):
@@ -104,3 +93,20 @@ class Orquestrador:
             unit.fechar_fluxo()
         return [p.terminate() for p in self.processos]
 
+
+def executa_subprocesso(objeto: MassFlowUnit):
+    
+    global status
+    
+    n = 1
+    tempo_espera = objeto.executar_acao_da_fila()
+    time.sleep(tempo_espera)
+    status[objeto.numero_equipamento] = objeto.checar_execucao()
+    #set_value(objeto, objeto.checar_execucao())
+    while True:
+        n += 1
+        tempo_espera = objeto.executar_acao_da_fila()
+        if tempo_espera is None: break
+        time.sleep(tempo_espera)
+        status[objeto.numero_equipamento] = objeto.checar_execucao()
+        #set_value(objeto, objeto.checar_execucao())   
