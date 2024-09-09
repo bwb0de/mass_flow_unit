@@ -71,14 +71,14 @@ class Orquestrador:
 
         for unidade in self.unidades:
             processo = Process(target=executa_subprocesso, args=(unidade, ))
+            processo.unit_status = unidade.numero_equipamento
             self.processos.append(processo)
             processo.start()
 
     def status_das_rotinas_em_execucao(self):
         retorno = []
-        for unit in self.unidades:
-            pass
-            #retorno.append(status[unit.numero_equipamento])
+        for p in self.processos:
+            print(p.unit_status)
         return retorno
 
     def status_equipamentos(self):
@@ -91,22 +91,20 @@ class Orquestrador:
         print('interrompendo...')
         for unit in self.unidades:
             unit.fechar_fluxo()
+            
         return [p.terminate() for p in self.processos]
 
 
+
+
 def executa_subprocesso(objeto: MassFlowUnit):
-    
-    global status
-    
     n = 1
     tempo_espera = objeto.executar_acao_da_fila()
     time.sleep(tempo_espera)
     status[objeto.numero_equipamento] = objeto.checar_execucao()
-    #set_value(objeto, objeto.checar_execucao())
     while True:
         n += 1
         tempo_espera = objeto.executar_acao_da_fila()
         if tempo_espera is None: break
         time.sleep(tempo_espera)
         status[objeto.numero_equipamento] = objeto.checar_execucao()
-        #set_value(objeto, objeto.checar_execucao())   
