@@ -8,12 +8,7 @@ from mass_flow_setup import inicializar_orquestrador
 
 ### Variáveis globais
 em_execucao = False
-o1 = inicializar_orquestrador()
 app = Flask(__name__)
-
-
-print(f" * Servidor MassFlow iniciando...")
-
 
 
 @app.route('/')

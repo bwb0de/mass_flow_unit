@@ -1,3 +1,4 @@
+import sys
 import os
 import socket
 
@@ -35,7 +36,10 @@ def start_client():
             continue
 
         elif data_to_send.lower().strip() == 'edit':
-            os.system('gedit /home/danielc/Documentos/Devel/GitHub/mass_flow_unit/parametros.json')
+            if sys.platform == 'win32':
+                os.system('notepad C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\parametros.json')
+            else:
+                os.system('gedit /home/danielc/Documentos/Devel/GitHub/mass_flow_unit/parametros.json')
             continue
 
         elif data_to_send.lower().strip() == 'run':

@@ -77,7 +77,7 @@ class MassFlowUnitTest:
     
 
 class MassFlowUnit:
-    def __init__(self, porta_de_conexao, taxa_de_transmissao,timeout=1) -> None:
+    def __init__(self, porta_de_conexao, taxa_de_transmissao, fluxo_maximo, conteudo_fluxo, timeout=1) -> None:
         self.porta_de_conexao = porta_de_conexao
         self.taxa_de_transmissao = taxa_de_transmissao
         self.arquivo_de_rotina = None
@@ -85,6 +85,8 @@ class MassFlowUnit:
         self.parar_rotina = None
         self.etapa_execucao = 0
         self.fluxo_corrente = None
+        self.fluxo_maximo = fluxo_maximo
+        self.conteudo_fluxo = conteudo_fluxo
 
         if self.numero_equipamento in {'624643-1','608314-1'}:
             self.fluxo_maximo = 100
