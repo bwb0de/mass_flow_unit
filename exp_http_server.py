@@ -63,9 +63,18 @@ def mass_flow_check():
 @app.route('/rotina_experimental', methods=['GET', 'POST'])
 def formulario_exp():
     if request.method == 'POST':
-        pass
+        with open('parametros.json', 'w') as params_file:
+            dados = request.form['acumulador_de_parametros'].strip('[[').strip(']]').strip('"').replace('","',',').split("],[")
+            dados_convertidos = [fluxo_tempo.replace('"',"").split(',') for fluxo_tempo in dados]
+            dados_convertidos = [(float(fluxo), int(tempo)) for fluxo, tempo in dados_convertidos]
+            json.dump(dados_convertidos, params_file, indent=4)
+
         return redirect('/')
-    return render_template('formulario_rotina.html')
+    
+    with open('parametros.json', 'r') as params_file:
+        params = json.loads(params_file.read())
+
+    return render_template('formulario_rotina.html', params=params)
 
 
 

@@ -8,10 +8,34 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pearl_style_compilado.min.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <title>Mass Flow Unit Controller</title>
+    <style>
+        .parametro {
+            margin-bottom: 10px;
+        }
+
+        .collapsible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            padding: 0 15px;
+        }
+
+        .collapsible.expanded {
+            max-height: 500px; /* Ajuste o tamanho máximo conforme necessário */
+            padding: 10px 15px;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            padding: 10px;
+            border: none;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/my_script.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/subform.js') }}"></script>
+    <!--<script type="text/javascript" src="{{ url_for('static', filename='js/my_script.js') }}"></script>-->
+    <!--<script type="text/javascript" src="{{ url_for('static', filename='js/subform.js') }}"></script>-->
 
         {% include 'navbar.html' %}
 
@@ -21,7 +45,7 @@
 
         {% include 'footer.html' %}
 
-    <script defer type="text/javascript" src="{{ url_for('static', filename='js/subforms_init.js') }}"></script>
+    <!--<script defer type="text/javascript" src="{{ url_for('static', filename='js/subforms_init.js') }}"></script>-->
 
 </body>
 </html>        

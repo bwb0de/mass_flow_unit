@@ -2,22 +2,93 @@
 
 {% block page_info %}
 
-<form id="formulario_corrente" nome="formulario_corrente" action="/rotina_experimental" method="POST" enctype="multipart/form-data">
+<form id="formulario_corrente" onsubmit="reunir_parametros_definidos(event)" nome="formulario_corrente" action="/rotina_experimental" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
 
     <div class="container_do_formulario">
         <h1 class="titulo_documento"> Rotina experimental </h1>
 
         <div class="items-center align-middle text-center" id="parametros">
-            <div id="parametro_01">Fluxo: <input type="text" style="width: 50px;"> &nbsp;&nbsp; Tempo: <input type="text" style="width: 50px;"> <button>+</button></div>
+
+            {% for p in params %}
+                <div id="parametro_{{ loop.index }}" class="parametro">
+                    Fluxo: <input name="fluxo" type="text" style="width: 50px;" value="{{p[0]}}">
+                    Tempo: <input name="tempo" type="text" style="width: 50px;" value="{{p[1]}}">
+                    <button type="button" onclick="remover_parametro({{ loop.index }})">-</button> 
+                </div>
+            {% endfor %}
+
         </div>
+    
+        <script>
+            let contador_de_parametros = 1;
+            adicionar_btn()
+
+            function adicionar_btn() {
+                const todos_parametros_definidos = document.querySelectorAll('.parametro');
+                if (todos_parametros_definidos.length > 0) {
+                    const ultimo_parametro = todos_parametros_definidos[todos_parametros_definidos.length - 1];
+                    if (!ultimo_parametro.querySelector('#adicionar_parametro_btn')) {
+                        const adicionar_parametro_btnHtml = `<button type="button" id="adicionar_parametro_btn" onclick="adicionar_parametro()">+</button>`;
+                        ultimo_parametro.innerHTML += adicionar_parametro_btnHtml;
+                    }
+                }
+            }
+    
+            function adicionar_parametro() {
+                contador_de_parametros++;
+    
+                const adicionar_parametro_btn = document.getElementById('adicionar_parametro_btn');
+                if (adicionar_parametro_btn) {
+                    adicionar_parametro_btn.remove();
+                }
+    
+                const bloco_parametros = document.getElementById("parametros");
+    
+                const novo_parametro = document.createElement("div");
+                novo_parametro.id = "parametro_" + contador_de_parametros;
+                novo_parametro.className = "parametro";
+                novo_parametro.innerHTML = `Fluxo: <input name="fluxo" type="text" style="width: 50px;"> &nbsp;&nbsp; 
+                                          Tempo: <input name="tempo" type="text" style="width: 50px;"> 
+                                          <button type="button" onclick="remover_parametro(${contador_de_parametros})">-</button> 
+                                          <button type="button" id="adicionar_parametro_btn" onclick="adicionar_parametro()">+</button>`;
+    
+                bloco_parametros.appendChild(novo_parametro);
+            }
+    
+            function remover_parametro(id) {
+                const parametro = document.getElementById('parametro_' + id);
+                if (parametro) {
+                    parametro.remove();
+                }
+                adicionar_btn();
+            }
+
+            function reunir_parametros_definidos(event) {
+                event.preventDefault();
+                const fluxos = document.querySelectorAll('input[name="fluxo"]');
+                const tempos = document.querySelectorAll('input[name="tempo"]');
+                let array_de_parametros = [];
+                for (let i = 0; i < fluxos.length; i++) {
+                    const fluxo = fluxos[i].value;
+                    const tempo = tempos[i].value;
+                    array_de_parametros.push([fluxo, tempo]);
+                }
+                const array_de_parametros_str = JSON.stringify(array_de_parametros);
+                document.getElementById('acumulador_de_parametros').value = array_de_parametros_str;
+                document.getElementById('formulario_corrente').submit();
+            }            
+        </script>        
+
 
     </div><br><br>
     
     <div style="height: 40%;"></div>
 
+    <input type="hidden" id="acumulador_de_parametros" name="acumulador_de_parametros">
+
     <div class="items-center align-middle text-center flex-grow">
-        <button form="formulario_corrente" id="submeter_formulario" type="submit" onclick="enviar_formulario();" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">Gravar mudanças</button>
+        <button form="formulario_corrente" id="submeter_formulario" type="submit" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">Gravar mudanças</button>
     </div>
 
 </form>

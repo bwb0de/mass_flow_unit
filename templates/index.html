@@ -5,16 +5,26 @@
         <div class='container_do_corpo_da_pagina'>
             <div class="container_do_formulario">
                 
-                <h1 class="titulo_documento">Seções</h1>
-                <div class="cartao">
-                    <h2 class="cartao-header"><a href="/dispositivos">Informações dos dispositivos</a></h2>
-                    <p class="cartao-body">Informações sobre os dispositivos conectados: mass_flow, arduino...</p>
-                </div><br><br>
+                <h1 class="titulo_documento">Seções <button class="toggle-btn" onclick="toggleCollapse()"><img width="18" src="{{ url_for('static', filename='img/menu-burger.svg') }}"></button></h1>
 
-                <div class="cartao">
-                    <h2 class="cartao-header"><a href="/rotina_experimental">Definição da rotina experimental</a></h2>
-                    <p class="cartao-body">Volume do fluxo, tempo, dispositivos envolvidos...</p>
-                </div><br><br>
+                <div id="formularios_colapsaveis" class="collapsible">
+                    <div class="cartao">
+                        <h2 class="cartao-header"><a href="/dispositivos">Informações dos dispositivos</a></h2>
+                        <p class="cartao-body">Informações sobre os dispositivos conectados: mass_flow, arduino...</p>
+                    </div><br><br>
+
+                    <div class="cartao">
+                        <h2 class="cartao-header"><a href="/rotina_experimental">Definição da rotina experimental</a></h2>
+                        <p class="cartao-body">Volume do fluxo, tempo, dispositivos envolvidos...</p>
+                    </div><br><br>
+                </div>
+
+                <script>
+                    function toggleCollapse() {
+                        const content = document.getElementById("formularios_colapsaveis");
+                        content.classList.toggle("expanded");
+                    }
+                </script>                
 
                 <table style="width: 100%; align-items: center;">
                     <tr>
