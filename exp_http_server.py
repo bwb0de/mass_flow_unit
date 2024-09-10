@@ -1,22 +1,18 @@
-import os
 import json
-import time
 
 from flask import jsonify, Flask
 from flask import render_template, request, redirect
 
-app = Flask(__name__)
-
 from mass_flow_setup import inicializar_orquestrador
 
-o1 = inicializar_orquestrador()
 
 ### Variáveis globais
 em_execucao = False
+o1 = inicializar_orquestrador()
+app = Flask(__name__)
+
 
 print(f" * Servidor MassFlow iniciando...")
-
-
 
 
 
@@ -69,12 +65,12 @@ def mass_flow_check():
 
 
 
-@app.route('/rotina_experimental')
+@app.route('/rotina_experimental', methods=['GET', 'POST'])
 def formulario_exp():
     if request.method == 'POST':
         pass
         return redirect('/')
-    return render_template('formulario_exp.html')
+    return render_template('formulario_rotina.html')
 
 
 

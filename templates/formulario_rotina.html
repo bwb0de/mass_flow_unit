@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+<form id="formulario_corrente" nome="formulario_corrente" action="/rotina_experimental" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+
+    <div class="container_do_formulario">
+        <h1 class="titulo_documento"> Rotina experimental </h1>
+
+        <div class="items-center align-middle text-center" id="parametros">
+            <div id="parametro_01">Fluxo: <input type="text" style="width: 50px;"> &nbsp;&nbsp; Tempo: <input type="text" style="width: 50px;"> <button>+</button></div>
+        </div>
+
+    </div><br><br>
+    
+    <div style="height: 40%;"></div>
+
+    <div class="items-center align-middle text-center flex-grow">
+        <button form="formulario_corrente" id="submeter_formulario" type="submit" onclick="enviar_formulario();" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">Gravar mudanças</button>
+    </div>
+
+</form>
+
+<br><br><br><br>
+
+{% endblock %}
