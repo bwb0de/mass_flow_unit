@@ -7,7 +7,6 @@ from flask import render_template, request, redirect
 
 app = Flask(__name__)
 
-
 from mass_flow_setup import inicializar_orquestrador
 
 o1 = inicializar_orquestrador()

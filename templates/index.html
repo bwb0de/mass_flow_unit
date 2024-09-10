@@ -4,8 +4,8 @@
 
         <div class='container_do_corpo_da_pagina'>
             <div class="container_do_formulario">
+                
                 <h1 class="titulo_documento">Seções</h1>
-
                 <div class="cartao">
                     <h2 class="cartao-header"><a href="/dispositivos">Informações dos dispositivos</a></h2>
                     <p class="cartao-body">Informações sobre os dispositivos conectados: mass_flow, arduino...</p>
@@ -15,6 +15,42 @@
                     <h2 class="cartao-header"><a href="/rotina_experimental">Definição da rotina experimental</a></h2>
                     <p class="cartao-body">Volume do fluxo, tempo, dispositivos envolvidos...</p>
                 </div><br><br>
+
+                <table style="width: 100%; align-items: center;">
+                    <tr>
+                        <td style="width: 33.33%; align-items: center;">
+                            <button type="button" id="run_task" onclick="api_call('/api/run');" class="bg-green-600 text-white hover:text-teal hover:bg-green-700 p-1 px-4 rounded-md">Executar rotina</button>
+                        </td>
+                        <td style="width: 33.33%; align-items: center;">
+                            <button type="button" id="stop_task" onclick="api_call('/api/stop');" class="bg-red-600 text-white hover:text-teal hover:bg-red-700 p-1 px-4 rounded-md" >Parar rotina</button>                            
+                        </td>
+                        <td style="width: 33.33%; align-items: center;">
+                            <button type="button" id="check_task" onclick="api_call('/api/check');" class="bg-gray-200 text-black hover:text-teal hover:bg-gray-300 p-1 px-4 rounded-md" >Checar andamento</button>                            
+                        </td>
+                    </tr>
+                </table><br><br>
+
+                
+                <div id="exp_info" style="text-align: center;"></div>
+
+                <script>
+                    function api_call(url) {
+                        el = document.getElementById('exp_info');
+                        fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro ao obter os dados da API');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            el.innerHTML = data
+                        })
+                        .catch(error => {
+                            console.error('Erro:', error);
+                        });                        
+                    }
+                </script>
             
             </div>
         </div>
