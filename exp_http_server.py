@@ -4,6 +4,7 @@ from flask import jsonify, Flask
 from flask import render_template, request, redirect
 
 from mass_flow_setup import inicializar_orquestrador
+from mass_flow_info_reader import update_info
 
 
 ### Variáveis globais
@@ -56,7 +57,7 @@ def mass_flow_equipo():
 def mass_flow_check():
     if not em_execucao:
         return jsonify("Não há o que checar, procedimentos não estão em execução...")
-    return jsonify(o1.status_das_rotinas_em_execucao())
+    return jsonify(update_info())
 
 
 

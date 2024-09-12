@@ -23,7 +23,6 @@
     
         <script>
             let contador_de_parametros = 1;
-            //adicionar_btn()
 
             function adicionar_btn() {
                 const todos_parametros_definidos = document.querySelectorAll('.parametro');
@@ -39,11 +38,6 @@
             function adicionar_parametro() {
                 contador_de_parametros++;
     
-                //const adicionar_parametro_btn = document.getElementById('adicionar_parametro_btn');
-                //if (adicionar_parametro_btn) {
-                //    adicionar_parametro_btn.remove();
-                //}
-    
                 const bloco_parametros = document.getElementById("parametros");
     
                 const novo_parametro = document.createElement("div");
@@ -52,7 +46,6 @@
                 novo_parametro.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;<input name="fluxo" type="text" class="p-1 bg-gray-200" style="width: 50px;">
                                           &nbsp;&nbsp;<input name="tempo" type="text" class="p-1 bg-gray-200" style="width: 50px;"> 
                                           <button type="button" class="bg-red-600 text-white hover:text-teal hover:bg-red-700 p-1 px-1 rounded-md" onclick="remover_parametro(${contador_de_parametros})"><img width="14" src="{{url_for('static', filename='img/cross.svg')}}"></button>`; 
-                                          //<button type="button" class="bg-green-600 text-white hover:text-teal hover:bg-green-700 p-1 px-1 rounded-md" id="adicionar_parametro_btn" onclick="adicionar_parametro()"><img width="14" src="{{url_for('static', filename='img/check.svg')}}"></button>`;
     
                 bloco_parametros.appendChild(novo_parametro);
             }

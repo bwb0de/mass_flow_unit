@@ -1,6 +1,7 @@
 import serial
 import time
 import json
+import random
 
 
 
@@ -9,7 +10,7 @@ class MassFlowUnitTest:
         self.porta_de_conexao = porta
         self.taxa_de_transmissao = taxa_de_transmissao
         self.arquivo_de_rotina = None
-        self.numero_equipamento = '999999-9mock'
+        self.numero_equipamento = str(random.randint(0,999999)).zfill(6)+'-'+str(random.randint(0,999)).zfill(3)+'mock'
         self.fluxo_maximo = fluxo_maximo
         self.conteudo_fluxo = conteudo_fluxo
         self.fracao_de_fluxo = 100/self.fluxo_maximo
@@ -17,6 +18,7 @@ class MassFlowUnitTest:
         self.parar_rotina = None
         self.etapa_execucao = 0
         self.fluxo_corrente = None
+        self.status = []
 
     def __repr__(self) -> str:
         label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
@@ -36,6 +38,9 @@ class MassFlowUnitTest:
         self.fluxo_corrente = fluxo
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self}: definindo fluxo para {fluxo}")
+        self.status.append(f"[{time.ctime()}] => {self}: definindo fluxo para {fluxo}")
+        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+            json.dump(self.status, unit_status_file, indent=4)
         return tempo
 
 
@@ -47,6 +52,9 @@ class MassFlowUnitTest:
 
     def fechar_fluxo(self):
         print(f'{self}: fechando fluxo...')
+        self.status.append(f'[{time.ctime()}] => {self}: fechando fluxo...')
+        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+            json.dump(self.status, unit_status_file, indent=4)        
 
     def obter_estado_equipamento(self):
         resposta = {
@@ -87,6 +95,7 @@ class MassFlowUnit:
         self.fluxo_corrente = None
         self.fluxo_maximo = fluxo_maximo
         self.conteudo_fluxo = conteudo_fluxo
+        self.status = []
 
         if self.numero_equipamento in {'624643-1','608314-1'}:
             self.fluxo_maximo = 100
@@ -199,6 +208,9 @@ class MassFlowUnit:
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self}: definindo fluxo para {fluxo}")
         self.enviar_comandos([f'SP,{fluxo}'])
+        self.status.append(f"[{time.ctime()}] => {self}: definindo fluxo para {fluxo}")
+        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+            json.dump(self.status, unit_status_file, indent=4)
         return tempo
     
     def checar_execucao(self):
@@ -210,6 +222,9 @@ class MassFlowUnit:
 
     def fechar_fluxo(self):
         print(f'{self}: fechando fluxo...')
+        self.status.append(f"[{time.ctime()}] => {self}: fechando fluxo...")
+        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+            json.dump(self.status, unit_status_file, indent=4)
         self.enviar_comandos(['V,M,C'])
 
     def enviar_comandos(self, commandos: list):

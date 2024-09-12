@@ -9,7 +9,7 @@
 
                 <div id="formularios_colapsaveis" class="collapsible">
                     <div class="cartao">
-                        <h2 class="cartao-header"><a href="/dispositivos">Informações dos dispositivos</a></h2>
+                        <h2 class="cartao-header"><a href="/api/equipo">Informações dos dispositivos</a></h2>
                         <p class="cartao-body">Informações sobre os dispositivos conectados: mass_flow, arduino...</p>
                     </div><br><br>
 
@@ -35,13 +35,13 @@
                             <button type="button" id="stop_task" onclick="api_call('/api/stop');" class="bg-red-600 text-white hover:text-teal hover:bg-red-700 p-1 px-4 rounded-md" >Parar rotina</button>                            
                         </td>
                         <td style="width: 33.33%; align-items: center;">
-                            <button type="button" id="check_task" onclick="api_call('/api/check');" class="bg-gray-200 text-black hover:text-teal hover:bg-gray-300 p-1 px-4 rounded-md" >Checar andamento</button>                            
+                            <button type="button" id="check_task" onclick="api_call_check_unit_info();" class="bg-gray-200 text-black hover:text-teal hover:bg-gray-300 p-1 px-4 rounded-md" >Checar andamento</button>                            
                         </td>
                     </tr>
                 </table><br><br>
 
                 
-                <div id="exp_info" style="text-align: center;"></div>
+                <div id="exp_info"></div>
 
                 <script>
                     function api_call(url) {
@@ -55,6 +55,30 @@
                         })
                         .then(data => {
                             el.innerHTML = data
+                        })
+                        .catch(error => {
+                            console.error('Erro:', error);
+                        });                        
+                    }
+                    function api_call_check_unit_info() {
+                        el = document.getElementById('exp_info');
+                        fetch('/api/check')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro ao obter os dados da API');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            el.innerHTML = '<div class="text-left;">'
+
+                            data.forEach(element => {
+                                el.innerHTML += '<p class="text-left">';
+                                el.innerHTML += element;
+                                el.innerHTML += '</p>';
+                            });
+
+                            el.innerHTML += '</div>'
                         })
                         .catch(error => {
                             console.error('Erro:', error);

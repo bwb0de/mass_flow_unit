@@ -1,4 +1,7 @@
+import json
 import time
+import os
+import shutil
 
 from multiprocessing import Process
 from mass_flow_unit import MassFlowUnit
@@ -67,6 +70,10 @@ class Orquestrador:
         for unidade in self.unidades:
             unidade.modo_digital()
 
+        shutil.rmtree('mass_flow_data/unit_status')
+        os.mkdir('mass_flow_data/unit_status')
+
+
         self.processos = []
 
         for unidade in self.unidades:
@@ -101,10 +108,9 @@ def executa_subprocesso(objeto: MassFlowUnit):
     n = 1
     tempo_espera = objeto.executar_acao_da_fila()
     time.sleep(tempo_espera)
-    status[objeto.numero_equipamento] = objeto.checar_execucao()
     while True:
         n += 1
         tempo_espera = objeto.executar_acao_da_fila()
         if tempo_espera is None: break
         time.sleep(tempo_espera)
-        status[objeto.numero_equipamento] = objeto.checar_execucao()
+
