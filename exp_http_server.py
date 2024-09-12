@@ -6,6 +6,9 @@ from flask import render_template, request, redirect
 from mass_flow_setup import inicializar_orquestrador
 from mass_flow_info_reader import update_info
 
+import os 
+
+os.chdir('C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\')
 
 ### Variáveis globais
 em_execucao = False
