@@ -6,11 +6,11 @@
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
 
     <div class="container_do_formulario">
-        <h1 class="titulo_documento"> Parâmetros experimentais &nbsp;<button type="button" class="bg-green-600 text-white hover:text-teal hover:bg-green-700 p-1 px-1 rounded-md" id="adicionar_parametro_btn" onclick="adicionar_parametro()"><img width="14" src="{{url_for('static', filename='img/check.svg')}}"></button></h1>
+        <h1 class="titulo_documento"> Parâmetros experimentais &nbsp;</h1>
 
         <div class="items-center align-middle text-center" id="parametros">
 
-            Fluxo &nbsp;&nbsp;&nbsp;&nbsp;Tempo
+            &nbsp;&nbsp;Fluxo &nbsp;&nbsp;&nbsp;Tempo(s)
             {% for p in params %}
                 <div id="parametro_{{ loop.index }}" class="parametro">
         &nbsp;&nbsp;&nbsp;&nbsp;<input name="fluxo" class="p-1 bg-gray-200" type="text" style="width: 50px;" value="{{p[0]}}">
@@ -19,6 +19,10 @@
                 </div>
             {% endfor %}
 
+        </div>
+        <div class="items-center align-middle text-center" id="adicionar_btn">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="bg-green-600 text-white hover:text-teal hover:bg-green-700 p-1 px-1 rounded-md" id="adicionar_parametro_btn" onclick="adicionar_parametro()"><img width="14" src="{{url_for('static', filename='img/check.svg')}}"></button>
         </div>
     
         <script>
