@@ -1,11 +1,12 @@
 import sys
 import os
-import socket
 
 import requests
 
 MASS_FLOW_SERVER_HOST = '127.0.0.1'
 MASS_FLOW_SERVER_PORT = '5000'
+
+from config import root
 
 def request_api_addr(url, params={}):
     response = requests.get(url, params=params)
@@ -28,18 +29,19 @@ def start_client():
         elif data_to_send.lower().strip() == '?':
             print('')
             print('Comandos disponíveis:')
-            print(' - editar: abre o arquivo de parâmetros com o editor de texto padrão...')
-            print(' - executar: inicia a execução da rotina definida...')
-            print(' - parar: interrompe execução da rotina...')
+            print(' - edit: abre o arquivo de parâmetros com o editor de texto padrão...')
+            print(' - run: inicia a execução da rotina definida...')
+            print(' - stop: interrompe execução da rotina...')
+            print(' - check: retorna histórico da rotina em execução...')
             print(' - sair: finaliza a linha de comando...')
             print('')
             continue
 
         elif data_to_send.lower().strip() == 'edit':
             if sys.platform == 'win32':
-                os.system('notepad C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\parametros.json')
+                os.system(f'notepad {root}\\parametros.json')
             else:
-                os.system('gedit /home/danielc/Documentos/Devel/GitHub/mass_flow_unit/parametros.json')
+                os.system(f'gedit {root}/parametros.json')
             continue
 
         elif data_to_send.lower().strip() == 'run':

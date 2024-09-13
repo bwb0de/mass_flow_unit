@@ -1,7 +1,7 @@
 import json
 import os
 
-info_file = 'mass_flow_data/units_info.json'
+from config import info_file
 
 def update_info():
     init_dir = os.getcwd()

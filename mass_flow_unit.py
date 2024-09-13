@@ -1,9 +1,10 @@
+import os
 import serial
 import time
 import json
 import random
 
-
+from config import units_info_folder
 
 class MassFlowUnitTest:
     def __init__(self, porta, taxa_de_transmissao, fluxo_maximo:int, conteudo_fluxo:str) -> None:
@@ -39,7 +40,7 @@ class MassFlowUnitTest:
         self.fila_execucao = self.fila_execucao[1:]
         print(f"{self}: definindo fluxo para {fluxo}")
         self.status.append(f"[{time.ctime()}] => {self}: definindo fluxo para {fluxo}")
-        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+        with open(f'{units_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)
         return tempo
 
@@ -53,7 +54,7 @@ class MassFlowUnitTest:
     def fechar_fluxo(self):
         print(f'{self}: fechando fluxo...')
         self.status.append(f'[{time.ctime()}] => {self}: fechando fluxo...')
-        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+        with open(f'{units_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
 
     def obter_estado_equipamento(self):
@@ -109,86 +110,8 @@ class MassFlowUnit:
             self.conteudo_fluxo = 'Ar'
 
         self.fracao_de_fluxo = 100/self.fluxo_maximo
-        self.fila_execucao = [] #incluir
+        self.fila_execucao = [] 
         
-        self.alarm_st_translator = {
-            "D": "Disabled",
-            "N": "Normal",
-            "H": "High",
-            "L": "Low"
-        }
-        self.totalizer_status_translator = {
-            "D": "Disabled",
-            "E": "Enabled",
-        }
-        self.analog_output_translator = {
-            "0": "0-5 Vdc",
-            "1": "0-10 Vdc",
-            "2": "4-20 mA",
-        }
-        self.mod_buss_translator = {
-            "0": "Installed",
-            "1": "Not installed",
-        }
-
-        # Testar, aparentemente com o código vigente o hex precisa possuir 4 digitos ex: '0xaaaa' verificar tamanho de retorno do equipamento
-        self.alarm_events_register = {
-            0: "High Flow Alarm",
-            1: "Low Flow Alarm",
-            2: "Flow Between High and Low Limits",
-            3: "Totalizer#1 Exceed Set Event Volume Limit",
-            4: "Totalizer#2 Exceed Set Event Volume Limit",
-            5: "High Pressure Alarm",
-            6: "Low Pressure Alarm",
-            7: "Pressure between High and Low Limits",
-            8: "Low Temperature Alarm",
-            9: "Low Temperature Alarm",
-            10: "Temperature Between High and Low Limits",
-            11: "Pulse Output Queue overflow",
-            12: "Password Event (attempt to change password)",
-            13: "Power On Event (power on delay > 0)",
-        }
-
-        # Testar, aparentemente com o código vigente o hex precisa possuir 4 digitos ex: '0xaaaa' verificar tamanho de retorno do equipamento
-        self.diagnostic_events_register = {
-            1: "CPU Temperature Too High",
-            2: "DP Sensor Initialization Error",
-            3: "AP Sensor Initialization Error",
-            4: "2.5 Vdc Reference Out of Range",
-            5: "Flow Out of Permissible Range",
-            6: "Absolute Pressure over Permissible Range",
-            7: "Gas Temperature Out of Range",
-            8: "Analog Output Alarm Flag",
-            9: "UART Serial Communication Error",
-            10: "Modbus Serial Communication Error",
-            11: "EEPROM R/W Error",
-            12: "Auto Zero Failure Flag",
-            13: "AP Tare Failure Flag",
-            14: "DP ADC Counts Invalid",
-            15: "AP ADC Counts Invalid",
-            16: "Fatal Error",
-        }
-
-
-        self.setpoint_saved_routine = [
-           (0.0, 1),
-           (0.0, 1000),
-           (1.0, 1),
-           (1.0, 500),
-           (0.0, 1),
-           (0.0, 500),
-           (5.0, 1),
-           (5.0, 500),
-           (0.0, 1),
-           (0.0, 500),
-           (25.0, 1),
-           (25.0, 500),
-           (0.0, 1),
-           (0.0, 500),
-           (100.0, 1),
-           (100.0, 500)
-         ]
-
     def __repr__(self) -> str:
         label_p = '   ' if self.conteudo_fluxo == 'Ar' else '[p]'
         return f'MassFlowUnit ID({self.numero_equipamento}:{self.porta_de_conexao}){label_p}'
@@ -209,7 +132,7 @@ class MassFlowUnit:
         print(f"{self}: definindo fluxo para {fluxo}")
         self.enviar_comandos([f'SP,{fluxo}'])
         self.status.append(f"[{time.ctime()}] => {self}: definindo fluxo para {fluxo}")
-        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+        with open(f'{units_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)
         return tempo
     
@@ -223,7 +146,7 @@ class MassFlowUnit:
     def fechar_fluxo(self):
         print(f'{self}: fechando fluxo...')
         self.status.append(f"[{time.ctime()}] => {self}: fechando fluxo...")
-        with open(f'mass_flow_data/unit_status/{self.numero_equipamento}.json', 'w') as unit_status_file:
+        with open(f'{units_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)
         self.enviar_comandos(['V,M,C'])
 
@@ -294,23 +217,6 @@ class MassFlowUnit:
             dados[5][0]: dados[5][1],
             dados[6][0]: dados[6][1],
             dados[7][0]: dados[7][1],
-            #"Valve Info": r_v,
-            #"Pulse Mode": pulse_mode,
-            #"Pulse Flow Start": flow_start,
-            #"Pulse Unit per Pulse": unit_per_pulse,
-            #"Pulse Time Interval [25-3276ms]": pulse_time_interval,
-            #"Totalizer #1 Mode": self.totalizer_status_translator[totalizer1_mode],
-            #"Totalizer #1 Start Flow Condition": start_flow_condition1,
-            #"Totalizer #1 Limit Volume": limit_volume1,
-            #"Totalizer #1 Pow on Delay": pow_on_delay1,
-            #"Totalizer #1 Autoreset Mode": autoreset_mode1,
-            #"Totalizer #1 Autoreset Delay": autoreset_delay1,
-            #"Totalizer #2 Mode": self.totalizer_status_translator[totalizer2_mode],
-            #"Totalizer #2 Start Flow Condition": start_flow_condition2,
-            #"Totalizer #2 Limit Volume": limit_volume2,
-            #"Totalizer #2 Pow on Delay": pow_on_delay2,
-            #"Totalizer #2 Autoreset Mode": autoreset_mode2,
-            #"Totalizer #2 Autoreset Delay": autoreset_delay2,
         }
 
 

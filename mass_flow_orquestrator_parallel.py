@@ -6,9 +6,7 @@ import shutil
 from multiprocessing import Process
 from mass_flow_unit import MassFlowUnit
 
-from ipvh_srv import set_value, get_value
-
-status={}
+from config import units_info_folder
 
 class Orquestrador:
     def __init__(self, mass_flow_units:list=[], exp_max_flow=200) -> None:
@@ -70,8 +68,8 @@ class Orquestrador:
         for unidade in self.unidades:
             unidade.modo_digital()
 
-        shutil.rmtree('mass_flow_data/unit_status')
-        os.mkdir('mass_flow_data/unit_status')
+        shutil.rmtree(units_info_folder)
+        os.mkdir(units_info_folder)
 
 
         self.processos = []

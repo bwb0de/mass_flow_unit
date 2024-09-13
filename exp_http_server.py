@@ -1,3 +1,4 @@
+import os 
 import json
 
 from flask import jsonify, Flask
@@ -6,9 +7,9 @@ from flask import render_template, request, redirect
 from mass_flow_setup import inicializar_orquestrador
 from mass_flow_info_reader import update_info
 
-import os 
+from config import root
 
-os.chdir('C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\')
+os.chdir(root)
 
 ### Variáveis globais
 em_execucao = False
