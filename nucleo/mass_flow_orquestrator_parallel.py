@@ -4,9 +4,9 @@ import os
 import shutil
 
 from multiprocessing import Process
-from mass_flow_unit import MassFlowUnit
+from nucleo.devices.mass_flow_unit import MassFlowUnit
 
-from config import units_info_folder
+from .paths import units_info_folder
 
 class Orquestrador:
     def __init__(self, mass_flow_units:list=[], exp_max_flow=200) -> None:

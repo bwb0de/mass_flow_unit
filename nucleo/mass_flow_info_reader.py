@@ -1,11 +1,10 @@
 import json
 import os
 
-from config import info_file
+from .paths import units_info_folder, root
 
 def update_info():
-    init_dir = os.getcwd()
-    os.chdir('mass_flow_data/unit_status')
+    os.chdir(units_info_folder)
     files = os.listdir('.')
     info_output = []
     files_info = {}
@@ -26,7 +25,7 @@ def update_info():
             global_steps += 1
         step += 1
     
-    os.chdir(init_dir)
+    os.chdir(root)
     return info_output
 
       

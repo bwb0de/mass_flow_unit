@@ -6,7 +6,7 @@ import requests
 MASS_FLOW_SERVER_HOST = '127.0.0.1'
 MASS_FLOW_SERVER_PORT = '5000'
 
-from config import root
+from .paths import parametros
 
 def request_api_addr(url, params={}):
     response = requests.get(url, params=params)
@@ -39,9 +39,9 @@ def start_client():
 
         elif data_to_send.lower().strip() == 'edit':
             if sys.platform == 'win32':
-                os.system(f'notepad {root}\\parametros.json')
+                os.system(f'notepad {parametros}')
             else:
-                os.system(f'gedit {root}/parametros.json')
+                os.system(f'gedit {parametros}')
             continue
 
         elif data_to_send.lower().strip() == 'run':

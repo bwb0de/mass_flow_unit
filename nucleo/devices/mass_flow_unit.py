@@ -4,7 +4,7 @@ import time
 import json
 import random
 
-from config import units_info_folder
+from ..paths import units_info_folder
 
 class MassFlowUnitTest:
     def __init__(self, porta, taxa_de_transmissao, fluxo_maximo:int, conteudo_fluxo:str) -> None:
@@ -81,9 +81,6 @@ class MassFlowUnitTest:
         return resposta
 
 
-
-    
-    
 
 class MassFlowUnit:
     def __init__(self, porta_de_conexao, taxa_de_transmissao, fluxo_maximo, conteudo_fluxo, timeout=1) -> None:
