@@ -11,6 +11,26 @@ units_info_folder_windows = f'{root}\\dados_execucao\\mass_flow_data\\unit_statu
 units_info_folder_linux = f'{root}/dados_execucao/mass_flow_data/unit_status'
 units_info_folder = units_info_folder_windows
 
+units_arduino_info_folder_windows = f'{root}\\dados_execucao\\arduino_data\\unit_status'
+units_arduino_info_folder_linux = f'{root}/dados_execucao/arduino_data/unit_status'
+units_arduino_info_folder = units_arduino_info_folder_windows
+
+units_lcr_info_folder_windows = f'{root}\\dados_execucao\\lcr_data\\unit_status'
+units_lcr_info_folder_linux = f'{root}/dados_execucao/lcr_data/unit_status'
+units_lcr_info_folder = units_lcr_info_folder_windows
+
 parametros_windows = f"{root}\\config\\parametros.json"
 parametros_linux = f"{root}/config/parametros.json"
 parametros = parametros_windows
+
+mass_flow_config_windows = f"{root}\\config\\mass_flow.json"
+mass_flow_config_linux = f"{root}/config/mass_flow.json"
+mass_flow_config = mass_flow_config_windows
+
+arduino_config_windows = f"{root}\\config\\arduino.json"
+arduino_config_linux = f"{root}/config/arduino.json"
+arduino_config = arduino_config_windows
+
+lcr_config_windows = f"{root}\\config\\lcr.json"
+lcr_config_linux = f"{root}/config/lcr.json"
+lcr_config = lcr_config_windows

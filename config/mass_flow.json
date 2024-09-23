@@ -1,0 +1,27 @@
+[
+    {
+        "porta": "COM5",
+        "taxa_de_transmissao": 9600,
+        "fluxo_maximo": 200,
+        "conteudo_fluxo": "Ar"
+    },
+    {
+        "porta": "COM6",
+        "taxa_de_transmissao": 9600,
+        "fluxo_maximo": 200,
+        "conteudo_fluxo": "Ar"
+    },
+    {
+        "porta": "COM7",
+        "taxa_de_transmissao": 9600,
+        "fluxo_maximo": 100,
+        "conteudo_fluxo": "produto"
+    },
+    {
+        "porta": "COM8",
+        "taxa_de_transmissao": 9600,
+        "fluxo_maximo": 100,
+        "conteudo_fluxo": "produto"
+    }
+]
+

@@ -1,0 +1,14 @@
+[
+    {
+        "nome": "valvulas",
+        "modelo": "mega",
+        "porta": "",
+        "taxa_de_transmissao": 9600
+    },
+    {
+        "nome": "sensores",
+        "modelo": "mega",
+        "porta": "",
+        "taxa_de_transmissao": 9600
+    }
+]

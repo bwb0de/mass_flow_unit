@@ -1,18 +1,20 @@
+import json
+
 from .devices.mass_flow_unit import MassFlowUnit, MassFlowUnitTest
 from .mass_flow_orquestrator_parallel import Orquestrador
 
+from .paths import mass_flow_config
 
 def inicializar_orquestrador_mass_flow():
-    taxa_de_transmissao = 9600
-    mass_flow_unit1 = MassFlowUnitTest('COM5', taxa_de_transmissao, 200, 'Ar')
-    mass_flow_unit2 = MassFlowUnitTest('COM6', taxa_de_transmissao, 200, 'Ar')
-    mass_flow_unit3 = MassFlowUnitTest('COM7', taxa_de_transmissao, 100, 'produto')
-    mass_flow_unit4 = MassFlowUnitTest('COM8', taxa_de_transmissao, 100, 'produto')    
-    #mass_flow_unit1 = MassFlowUnit('COM5', taxa_de_transmissao, 100, 'produto')
-    #mass_flow_unit2 = MassFlowUnit('COM6', taxa_de_transmissao, 200, 'Ar')
-    #mass_flow_unit3 = MassFlowUnit('COM7', taxa_de_transmissao, 100, 'produto')
-    #mass_flow_unit4 = MassFlowUnit('COM8', taxa_de_transmissao, 200, 'Ar')
-    o1 = Orquestrador([mass_flow_unit1, mass_flow_unit2, mass_flow_unit3, mass_flow_unit4], exp_max_flow=400)
+    mass_flow_units = []
+    with open(mass_flow_config) as arquivo_mass_flow_config:
+        definicoes = json.loads(arquivo_mass_flow_config.read())
+        for unit in definicoes:
+            mass_flow_unit = MassFlowUnitTest(unit['porta'], unit['taxa_de_transmissao'], unit['fluxo_maximo'], unit['conteudo_fluxo'])
+            #mass_flow_unit = MassFlowUnit(unit['porta'], unit['taxa_de_transmissao'], unit['fluxo_maximo'], unit['conteudo_fluxo'])
+            mass_flow_units.append(mass_flow_unit)
+
+    o1 = Orquestrador(mass_flow_units, exp_max_flow=400)
     return o1
 
 

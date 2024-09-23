@@ -1,0 +1,11 @@
+[
+    {
+        "name": "LCR",
+        "porta": "",
+        "taxa_de_transmissao": 9600,
+        "parity": "N",
+        "stopbits": 1,
+        "bytesize": 8,
+        "timeout": 1
+    }
+]
