@@ -7,7 +7,7 @@ from flask import render_template, request, redirect
 from nucleo.mass_flow_setup import inicializar_orquestrador_mass_flow
 from nucleo.mass_flow_info_reader import update_info
 
-from nucleo.paths import root, parametros
+from nucleo.paths import root, parametros_mass_flow
 
 os.chdir(root)
 
@@ -33,7 +33,7 @@ def mass_flow_run():
     global em_execucao, orq_mass_flow
     em_execucao = True
     lista_fluxo_nao_ar_tempo = None
-    with open(parametros, 'r') as arquivo_parametros:
+    with open(parametros_mass_flow, 'r') as arquivo_parametros:
         lista_fluxo_nao_ar_tempo = json.loads(arquivo_parametros.read())
     orq_mass_flow = inicializar_orquestrador_mass_flow()
     orq_mass_flow.distribuir_fluxo_nas_unidades(lista_fluxo_nao_ar_tempo)
@@ -53,7 +53,10 @@ def mass_flow_stop():
 
 @app.route('/api/equipo')
 def mass_flow_equipo():
-    return jsonify(orq_mass_flow.status_equipamentos())
+    orq_mass_flow = inicializar_orquestrador_mass_flow()
+    dados = jsonify(orq_mass_flow.status_equipamentos())
+    del(orq_mass_flow)
+    return dados
 
 
 
@@ -65,10 +68,10 @@ def mass_flow_check():
 
 
 
-@app.route('/rotina_experimental', methods=['GET', 'POST'])
-def formulario_exp():
+@app.route('/parametros_mass_flow', methods=['GET', 'POST'])
+def formulario_parametros_mass_flow():
     if request.method == 'POST':
-        with open(parametros, 'w') as params_file:
+        with open(parametros_mass_flow, 'w') as params_file:
             dados = request.form['acumulador_de_parametros'].strip('[[').strip(']]').strip('"').replace('","',',').split("],[")
             dados_convertidos = [fluxo_tempo.replace('"',"").split(',') for fluxo_tempo in dados]
             dados_convertidos = [(float(fluxo), int(tempo)) for fluxo, tempo in dados_convertidos]
@@ -76,10 +79,38 @@ def formulario_exp():
 
         return redirect('/')
     
-    with open(parametros, 'r') as params_file:
+    with open(parametros_mass_flow, 'r') as params_file:
         params = json.loads(params_file.read())
 
     return render_template('formulario_rotina.html', params=params)
+
+
+@app.route('/parametros_arduino', methods=['GET', 'POST'])
+def formulario_parametros_arduino():
+    if request.method == 'POST':
+        #with open("", 'w') as params_file:
+        #    pass
+
+        return redirect('/')
+    
+    #with open("", 'r') as params_file:
+    #    params = json.loads(params_file.read())
+
+    return render_template('message.html', titulo="Parâmetros Arduino", mensagem="Não implementado...")
+
+
+@app.route('/parametros_lcr', methods=['GET', 'POST'])
+def formulario_parametros_lcr():
+    if request.method == 'POST':
+        #with open("", 'w') as params_file:
+        #    pass
+
+        return redirect('/')
+    
+    #with open("", 'r') as params_file:
+    #    params = json.loads(params_file.read())
+
+    return render_template('message.html', titulo="Parâmetros LCR", mensagem="Não implementado...")
 
 
 

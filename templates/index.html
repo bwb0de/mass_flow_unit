@@ -7,24 +7,24 @@
                 
                 <h1 class="titulo_documento">Seções <button class="toggle-btn" onclick="toggleCollapse()"><img width="18" src="{{ url_for('static', filename='img/menu-burger.svg') }}"></button></h1>
 
-                <div id="formularios_colapsaveis" class="collapsible">
+                <div id="formularios_colapsaveis" class="collapsible" style="margin-top: -25px;">
                     <div class="cartao">
                         <h2 class="cartao-header"><a href="/api/equipo">Informações dos dispositivos</a></h2>
                         <p class="cartao-body">Informações sobre os dispositivos conectados: mass_flow, arduino, LCR...</p>
-                    </div><br><br>
+                    </div><br>
 
                     <div class="cartao">
-                        <h2 class="cartao-header"><a href="/rotina_experimental">Definição da rotina Mass Flow</a></h2>
+                        <h2 class="cartao-header"><a href="/parametros_mass_flow">Definição parâmetros Mass Flow</a></h2>
                         <p class="cartao-body">Volume do fluxo, tempo, dispositivos envolvidos...</p>
-                    </div><br><br>
+                    </div><br>
 
                     <div class="cartao">
-                        <h2 class="cartao-header"><a href="/rotina_experimental">Definição parâmetros Arduinos</a></h2>
+                        <h2 class="cartao-header"><a href="/parametros_arduino">Definição parâmetros Arduinos</a></h2>
                         <p class="cartao-body">Volume do fluxo, tempo, dispositivos envolvidos...</p>
-                    </div><br><br>
+                    </div><br>
 
                     <div class="cartao">
-                        <h2 class="cartao-header"><a href="/rotina_experimental">Definição parâmetros LCR</a></h2>
+                        <h2 class="cartao-header"><a href="/parametros_lcr">Definição parâmetros LCR</a></h2>
                         <p class="cartao-body">Volume do fluxo, tempo, dispositivos envolvidos...</p>
                     </div><br><br>
                 </div>

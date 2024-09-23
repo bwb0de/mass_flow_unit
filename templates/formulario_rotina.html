@@ -2,7 +2,7 @@
 
 {% block page_info %}
 
-<form id="formulario_corrente" onsubmit="reunir_parametros_definidos(event)" nome="formulario_corrente" action="/rotina_experimental" method="POST" enctype="multipart/form-data">
+<form id="formulario_corrente" onsubmit="reunir_parametros_definidos(event)" nome="formulario_corrente" action="/parametros_mass_flow" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
 
     <div class="container_do_formulario">

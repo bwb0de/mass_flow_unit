@@ -19,9 +19,9 @@ units_lcr_info_folder_windows = f'{root}\\dados_execucao\\lcr_data\\unit_status'
 units_lcr_info_folder_linux = f'{root}/dados_execucao/lcr_data/unit_status'
 units_lcr_info_folder = units_lcr_info_folder_windows
 
-parametros_windows = f"{root}\\config\\parametros.json"
-parametros_linux = f"{root}/config/parametros.json"
-parametros = parametros_windows
+parametros_mass_flow_windows = f"{root}\\config\\parametros.json"
+parametros_mass_flow_linux = f"{root}/config/parametros.json"
+parametros_mass_flow = parametros_mass_flow_windows
 
 mass_flow_config_windows = f"{root}\\config\\mass_flow.json"
 mass_flow_config_linux = f"{root}/config/mass_flow.json"
