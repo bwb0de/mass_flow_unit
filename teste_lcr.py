@@ -32,36 +32,26 @@ class LCRConnection:
 
     def connect(self, wait=None):
         self.ser = serial.serial_for_url(**self.ser_parameters, do_not_open=False)
+        
 
     def close(self):
         self.ser.close()
 
-    def enviar_comandos(self, comandos:list):
-        respostas = []
-        #resposta = b''
-        #for cmd in comandos:
-        #    comando_teste = bytes(f'{cmd}{TERMINATOR}', ENCODING)
-        #    self.ser.write(comando_teste)
-        #    n = 0
-        #    while True:
-        #        n+=1
-        #        print(n)
-        #        data = self.ser.read(1)  # Read one byte at a time
-        #        if data == b'\x10':  # Substituído por b'\x10' (NL)
-        #            break
-        #        resposta += data
-        #        respostas.append((cmd, resposta.decode('ascii')))  # Mantendo 'ascii'
-        #        if n==3: break
-#
-        #print(respostas)        
-        respostas = []
-        for cmd in comandos:
-            comando_teste = bytes(f'{cmd}{TERMINATOR}', ENCODING)
-            self.ser.write(comando_teste)
-            resposta = self.ser.readline().decode().strip()
-            respostas.append((cmd, resposta))
-        print(respostas)        
+
+    def enviar_comando(self, comando):
+        comando_teste = bytes(comando, ENCODING) + b'\x10'
+        self.ser.write(comando_teste)
+        self.ser.flush()
+        time.sleep(4)
+        resposta = self.ser.readline().decode().strip()
+        print(resposta)
+
+
 
 lcr = LCRConnection('COM5')
-lcr.enviar_comandos(["TRIG:SOUR MAN", "DISP:PAGE MSET"])
+#"TRIG:SOUR MAN"
+for msg in ["TRIG:SOUR BUS", "VOLT?", "DISP:PAGE?"]:
+    lcr.enviar_comando(msg)
+
+
 lcr.close()
