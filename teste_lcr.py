@@ -63,5 +63,5 @@ class LCRConnection:
         print(respostas)        
 
 lcr = LCRConnection('COM5')
-lcr.enviar_comandos(["TRIG:SOUR MAN", 'DISP:PAGE?', 'FREQ?'])
+lcr.enviar_comandos(["TRIG:SOUR MAN", "DISP:PAGE MSET"])
 lcr.close()
