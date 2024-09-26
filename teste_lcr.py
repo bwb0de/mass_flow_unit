@@ -46,12 +46,23 @@ class LCRConnection:
         resposta = self.ser.readline().decode().strip()
         print(resposta)
 
+    def ler(self):
+        resposta = self.ser.readline().decode().strip()
+        print(resposta)
+
+
 
 
 lcr = LCRConnection('COM5')
 #"TRIG:SOUR MAN"
-for msg in ["TRIG:SOUR BUS", "VOLT?", "DISP:PAGE?"]:
-    lcr.enviar_comando(msg)
+
+"APER SLOW"
+"TRIG:SOUR INT"
+
+for msg in ["APER SLOW", "TRIG:SOUR INT"]:
+#for msg in ["TRIG:SOUR BUS", "VOLT?", "DISP:PAGE?"]:
+    #lcr.enviar_comando(msg)
+    lcr.ler()
 
 
 lcr.close()
