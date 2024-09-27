@@ -32,6 +32,7 @@ class LCRConnection:
 
     def connect(self, wait=None):
         self.ser = serial.serial_for_url(**self.ser_parameters, do_not_open=False)
+        time.sleep(2)
         
 
     def close(self):
@@ -39,30 +40,27 @@ class LCRConnection:
 
 
     def enviar_comando(self, comando):
-        comando_teste = bytes(comando, ENCODING) + b'\x10'
+        comando_teste = bytes(comando+f'{TERMINATOR}', ENCODING)# + b'\x10'
         self.ser.write(comando_teste)
         self.ser.flush()
-        time.sleep(4)
+        time.sleep(0.1)
         resposta = self.ser.readline().decode().strip()
-        print(resposta)
+        return resposta
 
     def ler(self):
         resposta = self.ser.readline().decode().strip()
         print(resposta)
 
-
+    def enviar_comandos(self, comandos):
+        for msg in comandos:
+            resposta = ''
+            print("Comando:", msg)
+            while resposta == '':
+                resposta = lcr.enviar_comando(msg).strip()
+                lcr.ler()
+                time.sleep(0.01)
 
 
 lcr = LCRConnection('COM5')
-#"TRIG:SOUR MAN"
-
-"APER SLOW"
-"TRIG:SOUR INT"
-
-for msg in ["APER SLOW", "TRIG:SOUR INT"]:
-#for msg in ["TRIG:SOUR BUS", "VOLT?", "DISP:PAGE?"]:
-    #lcr.enviar_comando(msg)
-    lcr.ler()
-
-
+lcr.enviar_comandos(["*TRG", "FREQ?"])
 lcr.close()
