@@ -10,7 +10,7 @@ ENCODING = "ascii"
 
 
 class LCRUnit:
-    def __init__(self, port, taxa_de_transmissao, parity, stopbits, bytesize, timeout):
+    def __init__(self, port, taxa_de_transmissao, parity='N', stopbits=1, bytesize=8, timeout=1):
         self.name = "LCR"
         self.ser = None
         self.transport = None
@@ -19,10 +19,10 @@ class LCRUnit:
         self.port = port
         self.url = port
         self.baudrate = 9600
-        self.parity = 'N'
-        self.stopbits = 1
-        self.bytesize = 8
-        self.timeout = 1
+        self.parity = parity
+        self.stopbits = stopbits
+        self.bytesize = bytesize
+        self.timeout = timeout
         self.ser_parameters = {
             "url": self.url,
             "baudrate": self.baudrate,
@@ -33,6 +33,7 @@ class LCRUnit:
         self.tempo_total_execucao = None
         self.tempo_transcorrido = None        
         self.numero_equipamento = 1
+        self.status = []
         self.conectar()
 
     def __repr__(self) -> str:
@@ -60,6 +61,7 @@ class LCRUnit:
         print(resposta)
 
     def enviar_comandos(self, comandos):
+        respostas = []
         for msg in comandos:
             resposta = ''
             print("Comando:", msg)
@@ -67,12 +69,11 @@ class LCRUnit:
                 resposta = self.enviar_comando(msg).strip()
                 self.ler()
                 time.sleep(0.01)
+            respostas.append(resposta)
+        return respostas
 
     def ler_medidas(self):
-        respostas = []
-        for _ in range(10):
-            resposta = self.enviar_comando("*TRG")
-            respostas.append(resposta)
+        resposta = self.enviar_comandos(["*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG"])
 
         #Tratar respostas aqui e persistir em algum lugar...
 
@@ -80,8 +81,7 @@ class LCRUnit:
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
 
-
-        return respostas
+        return resposta
 
 
 
