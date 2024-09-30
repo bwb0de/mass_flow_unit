@@ -1,8 +1,8 @@
 [
     {
-        "nome": "sensores",
+        "nome": "Sensores",
         "modelo": "uno",
-        "porta": "",
+        "porta": "COM3",
         "taxa_de_transmissao": 9600,
         "tempo_espera": 3
     }

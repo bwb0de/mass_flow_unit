@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+<form id="formulario_corrente" onsubmit="reunir_parametros_definidos(event)" nome="formulario_corrente" action="/parametros_lcr" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+
+    <div class="container_do_formulario">
+        <h1 class="titulo_documento"> Parâmetros LCRs &nbsp;</h1>
+
+        <div class="items-center align-middle text-center flex-grow" id="parametros">
+            {% for lcr in lcrs %}
+
+                <h3 class="text-xl text-gray-700"><b>LCR {{ loop.index }}:</b></h3><br>
+
+                <div>
+                    <div ><label for="lcr_{{loop.index}}"><b>Identificador</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="lcr_{{loop.index}}" name="lcr_{{loop.index}}" value="{{lcr.nome}}" placeholder="Identificador">
+                    </div>
+                </div><br>
+
+                <div>
+                    <div><label for="lcr_{{loop.index}}_porta"><b>Porta</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="lcr_{{loop.index}}_porta" name="lcr_{{loop.index}}_porta" value="{{lcr.porta}}" placeholder="Porta">
+                    </div>
+                </div><br>
+
+                <div>
+                    <div><label for="lcr_{{loop.index}}_tax_transmiss"><b>Taxa de transmissão</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="lcr_{{loop.index}}_tax_transmiss" name="lcr_{{loop.index}}_tax_transmiss" value="{{lcr.taxa_de_transmissao}}" placeholder="Taxa de transmissão">
+                    </div>
+                </div><br>
+
+                <div>
+                    <div><label for="lcr_{{loop.index}}_tax_transmiss"><b>Número de medidas por sensor</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="lcr_{{loop.index}}_numero_medidas" name="lcr_{{loop.index}}_numero_medidas" value="{{lcr.numero_medidas}}" placeholder="Número de medidas">
+                    </div>
+                </div><br>
+                
+
+            <br><br>
+
+            {% endfor %}
+
+
+        </div>
+    </div><br><br>
+    
+    <div style="height: 40%;"></div>
+
+    <input type="hidden" id="acumulador_de_parametros" name="acumulador_de_parametros">
+
+    <div class="items-center align-middle text-center flex-grow">
+        <button form="formulario_corrente" id="submeter_formulario" type="submit" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">Gravar mudanças</button>
+    </div>
+
+</form>
+
+<br><br><br><br>
+
+{% endblock %}

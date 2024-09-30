@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+<form id="formulario_corrente" onsubmit="reunir_parametros_definidos(event)" nome="formulario_corrente" action="/parametros_arduino" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+
+    <div class="container_do_formulario">
+        <h1 class="titulo_documento"> Parâmetros arduinos &nbsp;</h1>
+
+        <div class="items-center align-middle text-center flex-grow" id="parametros">
+
+
+            {% for arduino in arduinos %}
+
+                <h3 class="text-xl text-gray-700"><b>Arduino {{ loop.index }}:</b></h3><br>
+
+                <div>
+                    <div ><label for="arduino_{{loop.index}}"><b>Identificador</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="arduino_{{loop.index}}" name="arduino_{{loop.index}}" value="{{arduino.nome}}" placeholder="Identificador">
+                    </div>
+                </div><br>
+
+
+                <div><label for="arduino_{{loop.index}}_model"><b>Modelo</b>:</label></div>
+                    <div style="width: 100%; ">
+                        <select id="arduino_{{loop.index}}_model" name="arduino_{{loop.index}}_model">
+                            {% if arduino.modelo == "uno" %}
+                                <option style="width:25px;" type="checkbox" class="bg-gray-50" id="arduino_{{loop.index}}_model_uno" name="Uno" value="uno" selected>Uno</option>
+                            {% else %}
+                                <option style="width:25px;" type="checkbox" class="bg-gray-50" id="arduino_{{loop.index}}_model_uno" name="Uno" value="uno">Uno</option>
+                            {% endif %}
+
+                            {% if arduino.modelo == "mega" %}
+                                <option style="width:25px;" type="checkbox" class="bg-gray-50" id="arduino_{{loop.index}}_model_mega" name="Mega" value="mega" selected>Mega</option>
+                            {% else %}
+                                <option style="width:25px;" type="checkbox" class="bg-gray-50" id="arduino_{{loop.index}}_model_mega" name="Mega" value="mega">Mega</option>
+                            {% endif %}
+                        </select><br><br>
+                    </div>
+
+                <div>
+                    <div><label for="arduino_{{loop.index}}_porta"><b>Porta</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="arduino_{{loop.index}}_porta" name="arduino_{{loop.index}}_porta" value="{{arduino.porta}}" placeholder="Porta">
+                    </div>
+                </div><br>
+
+                <div>
+                    <div><label for="arduino_{{loop.index}}_tax_transmiss"><b>Taxa de transmissão</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="arduino_{{loop.index}}_tax_transmiss" name="arduino_{{loop.index}}_tax_transmiss" value="{{arduino.taxa_de_transmissao}}" placeholder="Taxa de transmissão">
+                    </div>
+                </div><br>
+
+                <div>
+                    <div><label for="arduino_{{loop.index}}_tempo_espera"><b>Tempo espera em um sensor</b>:</label></div>
+                    <div>
+                        <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="arduino_{{loop.index}}_tempo_espera" name="arduino_{{loop.index}}_tempo_espera" value="{{arduino.tempo_espera}}" placeholder="Tempo espera em um sensor">
+                    </div>
+                </div><br>
+
+
+            <br><br>
+
+            {% endfor %}
+
+
+        </div>
+    </div><br><br>
+    
+    <div style="height: 40%;"></div>
+
+    <input type="hidden" id="acumulador_de_parametros" name="acumulador_de_parametros">
+
+    <div class="items-center align-middle text-center flex-grow">
+        <button form="formulario_corrente" id="submeter_formulario" type="submit" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">Gravar mudanças</button>
+    </div>
+
+</form>
+
+<br><br><br><br>
+
+{% endblock %}

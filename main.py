@@ -7,7 +7,7 @@ from flask import render_template, request, redirect
 from nucleo.orquestrator_setup import inicializar_orquestrador_mass_flow, inicializar_orquestrador_mass_flow_teste
 from nucleo.mass_flow_info_reader import update_info
 
-from nucleo.paths import root, parametros_mass_flow
+from nucleo.paths import root, parametros_mass_flow, arduino_config, lcr_config
 
 os.chdir(root)
 
@@ -88,29 +88,46 @@ def formulario_parametros_mass_flow():
 @app.route('/parametros_arduino', methods=['GET', 'POST'])
 def formulario_parametros_arduino():
     if request.method == 'POST':
-        #with open("", 'w') as params_file:
-        #    pass
-
+        conf = [{
+            "nome": request.form.get('arduino_1'),
+            "modelo": request.form.get('arduino_1_model'),
+            "porta": request.form.get('arduino_1_porta'),
+            "taxa_de_transmissao": int(request.form.get('arduino_1_tax_transmiss')),
+            "tempo_espera": int(request.form.get('arduino_1_tempo_espera'))
+        }]
+        
+        with open(arduino_config, 'w') as arduinos_file:
+            json.dump(conf, arduinos_file, indent=4)
+        
         return redirect('/')
     
-    #with open("", 'r') as params_file:
-    #    params = json.loads(params_file.read())
+    with open(arduino_config) as arduinos_file:
+        arduinos = json.loads(arduinos_file.read())
 
-    return render_template('message.html', titulo="Parâmetros Arduino", mensagem="Não implementado...")
+    return render_template('formulario_arduino.html', arduinos=arduinos)
 
 
 @app.route('/parametros_lcr', methods=['GET', 'POST'])
 def formulario_parametros_lcr():
     if request.method == 'POST':
-        #with open("", 'w') as params_file:
-        #    pass
+
+        with open(lcr_config) as lcr_file:
+            lcr_conf = json.loads(lcr_file.read())[0]
+
+        lcr_conf['nome'] = request.form.get('lcr_1')
+        lcr_conf['porta'] = request.form.get('lcr_1_porta')
+        lcr_conf['taxa_de_transmissao'] = request.form.get('lcr_1_tax_transmiss')
+        lcr_conf['numero_medidas'] = request.form.get('lcr_1_numero_medidas')
+
+        with open(lcr_config, 'w') as lcr_file:
+            json.dump([lcr_conf], lcr_file, indent=4)
 
         return redirect('/')
     
-    #with open("", 'r') as params_file:
-    #    params = json.loads(params_file.read())
+    with open(lcr_config) as lcr_file:
+        lcr_conf = json.loads(lcr_file.read())
 
-    return render_template('message.html', titulo="Parâmetros LCR", mensagem="Não implementado...")
+    return render_template('formulario_lcr.html', lcrs=lcr_conf)
 
 
 
