@@ -5,6 +5,9 @@ import shutil
 
 from multiprocessing import Process
 from nucleo.devices.mass_flow_unit import MassFlowUnit
+from nucleo.devices.arduino_unit import ArduinoUnit
+from nucleo.devices.lcr_unit import LCRUnit
+
 
 from .paths import units_info_folder
 
@@ -12,15 +15,17 @@ class Orquestrador:
     def __init__(self, mass_flow_units:list=[], exp_max_flow=200) -> None:
         self.mass_flow_units = mass_flow_units
         self.exp_max_flow = exp_max_flow
-        self.unidades_produto = []
-        self.unidades_ar = []
+        self.unidades_mass_flow_produto = []
+        self.unidades_mass_flow_ar = []
+        self.unidades_arduino = []
+        self.lcr = None
         for unit in mass_flow_units:
             if unit.conteudo_fluxo == 'Ar':
-                self.unidades_ar.append(unit)
+                self.unidades_mass_flow_ar.append(unit)
             else:
-                self.unidades_produto.append(unit)
-        self.numero_unidades_produto = len(self.unidades_produto)
-        self.numero_unidades_ar = len(self.unidades_ar)
+                self.unidades_mass_flow_produto.append(unit)
+        self.numero_unidades_produto = len(self.unidades_mass_flow_produto)
+        self.numero_unidades_ar = len(self.unidades_mass_flow_ar)
         self.script_fluxo = []
         self.script_ajustado_fluxo_tempo_produto = []
         self.script_ajustado_fluxo_tempo_ar = []
@@ -29,8 +34,8 @@ class Orquestrador:
 
     @property
     def unidades(self) -> list:
-        resposta = self.unidades_ar[:]
-        resposta.extend(self.unidades_produto)
+        resposta = self.unidades_mass_flow_ar[:]
+        resposta.extend(self.unidades_mass_flow_produto)
         return resposta
     
 
@@ -43,11 +48,19 @@ class Orquestrador:
             print(f'Conteúdo fluxo: {unit.conteudo_fluxo}')
             print(f'Fração de fluxo: {unit.fracao_de_fluxo}')
             print('')
+
+    def adicionar_arduinos(self, arduinos):
+        self.unidades_arduino = arduinos
+
+    def adicionar_lcr(self, lcr):
+        self.lcr = lcr
     
     def distribuir_fluxo_nas_unidades(self, lista_fluxo_nao_ar_tempo:list):
         self.script_fluxo = lista_fluxo_nao_ar_tempo
         self.script_ajustado_fluxo_tempo_produto = []
         self.script_ajustado_fluxo_tempo_ar = []
+
+        tempo_total = 0
         
         for fluxo, tempo in lista_fluxo_nao_ar_tempo:
             assert fluxo <= self.exp_max_flow, "Fluxo definido supera o fluxo máximo do orquestrador..."
@@ -55,12 +68,16 @@ class Orquestrador:
             fluxo_ar = (self.exp_max_flow - fluxo) / self.numero_unidades_ar
             self.script_ajustado_fluxo_tempo_produto.append((fluxo_produto, tempo))
             self.script_ajustado_fluxo_tempo_ar.append((fluxo_ar, tempo))
+            tempo_total += tempo
         
-        for unidade in self.unidades_ar:
+        for unidade in self.unidades_mass_flow_ar:
             unidade.inserir_na_fila_execucao(self.script_ajustado_fluxo_tempo_ar)
 
-        for unidade in self.unidades_produto:
+        for unidade in self.unidades_mass_flow_produto:
             unidade.inserir_na_fila_execucao(self.script_ajustado_fluxo_tempo_produto)
+
+        for arduino in self.unidades_arduino:
+            arduino.definir_tempo_total_execucao(tempo_total)
 
 
     def executar_rotina(self):
@@ -75,7 +92,7 @@ class Orquestrador:
         self.processos = []
 
         for unidade in self.unidades:
-            processo = Process(target=executa_subprocesso, args=(unidade, ))
+            processo = Process(target=executa_subprocesso_mass_flow, args=(unidade, ))
             processo.unit_status = unidade.numero_equipamento
             self.processos.append(processo)
             processo.start()
@@ -102,12 +119,22 @@ class Orquestrador:
 
 
 
-def executa_subprocesso(objeto: MassFlowUnit):
+def executa_subprocesso_mass_flow(objeto: MassFlowUnit):
     n = 1
     tempo_espera = objeto.executar_acao_da_fila()
     time.sleep(tempo_espera)
     while True:
         n += 1
+        tempo_espera = objeto.executar_acao_da_fila()
+        if tempo_espera is None: break
+        time.sleep(tempo_espera)
+
+
+
+def executa_subprocesso_arduino(objeto: ArduinoUnit):
+    tempo_espera = objeto.executar_acao_da_fila()
+    time.sleep(tempo_espera)
+    while True:
         tempo_espera = objeto.executar_acao_da_fila()
         if tempo_espera is None: break
         time.sleep(tempo_espera)
