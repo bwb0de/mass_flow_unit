@@ -100,7 +100,8 @@ class Orquestrador:
             processo.unit_status = unidade.numero_equipamento
             self.processos.append(processo)
             processo.start()
-
+        
+        time.sleep(1)
 
         processo_arduino = Process(target=executa_subprocesso_arduino, args=(self.arduino, ))
         self.processos.append(processo_arduino)

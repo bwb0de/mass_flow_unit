@@ -9,7 +9,7 @@ from nucleo.ipvh_srv import set_value
 from ..paths import units_arduino_info_folder
 
 class ArduinoUnitTest:
-    def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None) -> None:
+    def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None, tempo_espera=3) -> None:
         modelos = {'uno': 14, 'mega': 54}
         assert(modelo in modelos), "Os modelos conhecidos são UNO ou MEGA..."
         self.nome = str(random.randint(0,1000)).zfill(4) if nome is None else nome
@@ -65,7 +65,7 @@ class ArduinoUnitTest:
 
 
 class ArduinoUnit:
-    def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None) -> None:
+    def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None, tempo_espera=3) -> None:
         modelos = {'uno': 14, 'mega': 54}
         assert(modelo in modelos), "Os modelos conhecidos são UNO ou MEGA..."
         self.nome = str(random.randint(0,1000)).zfill(4) if nome is None else nome
@@ -78,6 +78,7 @@ class ArduinoUnit:
         self.tempo_transcorrido = None
         self.status = []
         self.numero_equipamento = 1
+        self.tempo_espera = tempo_espera
         self.conectar()
 
     def __repr__(self) -> str:
@@ -119,7 +120,7 @@ class ArduinoUnit:
         self.valores_lcr = self.lcr.ler_medidas()
         set_value('sensor_corrente', self.sensor_corrente)
 
-        tempo_step = 3
+        tempo_step = self.tempo_espera
 
         self.status.append(f"[{time.ctime()}] => {self}: modificando sensor para {self.sensor_corrente}")
         with open(f'{units_arduino_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:

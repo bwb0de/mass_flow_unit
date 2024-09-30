@@ -11,7 +11,7 @@ ENCODING = "ascii"
 
 
 class LCRUnitTest:
-    def __init__(self, port, taxa_de_transmissao, parity='N', stopbits=1, bytesize=8, timeout=1):
+    def __init__(self, port, taxa_de_transmissao, parity='N', stopbits=1, bytesize=8, timeout=1, numero_medidas=10):
         self.name = "LCR"
         self.ser = None
         self.transport = None
@@ -24,6 +24,7 @@ class LCRUnitTest:
         self.stopbits = stopbits
         self.bytesize = bytesize
         self.timeout = timeout
+        self.numero_medidas = numero_medidas
         self.ser_parameters = {
             "url": self.url,
             "baudrate": self.baudrate,
@@ -57,7 +58,7 @@ class LCRUnitTest:
             secundario = random.randint(3, 7) / 100            
             resposta.append(f'{primario},{secundario}')
 
-        self.status.append(f"[{time.ctime()}] => {self}: medindo...")
+        self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
 
@@ -69,7 +70,7 @@ class LCRUnitTest:
 
 
 class LCRUnit:
-    def __init__(self, port, taxa_de_transmissao, parity='N', stopbits=1, bytesize=8, timeout=1):
+    def __init__(self, port, taxa_de_transmissao, parity='N', stopbits=1, bytesize=8, timeout=1, numero_medidas=10):
         self.name = "LCR"
         self.ser = None
         self.transport = None
@@ -82,6 +83,7 @@ class LCRUnit:
         self.stopbits = stopbits
         self.bytesize = bytesize
         self.timeout = timeout
+        self.numero_medidas = numero_medidas
         self.ser_parameters = {
             "url": self.url,
             "baudrate": self.baudrate,
@@ -132,11 +134,13 @@ class LCRUnit:
         return respostas
 
     def ler_medidas(self):
-        resposta = self.enviar_comandos(["*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG", "*TRG"])
+        comandos = ["*TRG"]
+        comandos *= self.numero_medidas
+        resposta = self.enviar_comandos(comandos)
 
         #Tratar respostas aqui e persistir em algum lugar...
 
-        self.status.append(f"[{time.ctime()}] => {self}: medindo...")
+        self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
 

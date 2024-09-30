@@ -1,8 +1,9 @@
 [
     {
         "nome": "sensores",
-        "modelo": "mega",
+        "modelo": "uno",
         "porta": "",
-        "taxa_de_transmissao": 9600
+        "taxa_de_transmissao": 9600,
+        "tempo_espera": 3
     }
 ]

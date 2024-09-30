@@ -24,13 +24,13 @@ def inicializar_orquestrador_mass_flow():
     with open(arduino_config) as arquivo_arduino_config:
         definicoes = json.loads(arquivo_arduino_config.read())
         for unit in definicoes:
-            arduino_unit = ArduinoUnit(unit['porta'], unit['taxa_de_transmissao'], unit['modelo'], unit['nome'])
+            arduino_unit = ArduinoUnit(unit['porta'], unit['taxa_de_transmissao'], unit['modelo'], unit['nome'], unit['tempo_espera'])
 
     lcr_unit = None
     with open(lcr_config) as arquivo_lcr_config:
         definicoes = json.loads(arquivo_lcr_config.read())
         if len(definicoes) == 1:
-            lcr_unit = LCRUnit(unit['porta'], unit['taxa_de_transmissao'], unit['parity'], unit['stopbits'], unit['bytesize'], unit['timeout'])
+            lcr_unit = LCRUnit(unit['porta'], unit['taxa_de_transmissao'], unit['parity'], unit['stopbits'], unit['bytesize'], unit['timeout'], unit['numero_medidas'])
 
     o1 = Orquestrador(mass_flow_units, exp_max_flow=400)
     o1.adicionar_lcr(lcr_unit)
@@ -53,13 +53,15 @@ def inicializar_orquestrador_mass_flow_teste():
     with open(arduino_config) as arquivo_arduino_config:
         definicoes = json.loads(arquivo_arduino_config.read())
         for unit in definicoes:
-            arduino_unit = ArduinoUnitTest(unit['porta'], unit['taxa_de_transmissao'], unit['modelo'], unit['nome'])
+            arduino_unit = ArduinoUnitTest(unit['porta'], unit['taxa_de_transmissao'], unit['modelo'], unit['nome'], unit['tempo_espera'])
 
     lcr_unit = None
     with open(lcr_config) as arquivo_lcr_config:
         definicoes = json.loads(arquivo_lcr_config.read())
+        print(definicoes)
         if len(definicoes) == 1:
-            lcr_unit = LCRUnitTest(unit['porta'], unit['taxa_de_transmissao'])
+            for unit in definicoes:
+                lcr_unit = LCRUnitTest(unit['porta'], unit['taxa_de_transmissao'], numero_medidas=unit['numero_medidas'])
 
     o1 = Orquestrador(mass_flow_units, exp_max_flow=400)
     o1.adicionar_lcr(lcr_unit)
