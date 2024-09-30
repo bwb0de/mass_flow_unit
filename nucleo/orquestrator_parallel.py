@@ -9,7 +9,7 @@ from nucleo.devices.arduino_unit import ArduinoUnit
 from nucleo.devices.lcr_unit import LCRUnit
 
 
-from .paths import units_info_folder
+from .paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
 
 class Orquestrador:
     def __init__(self, mass_flow_units:list=[], exp_max_flow=200) -> None:
@@ -51,7 +51,7 @@ class Orquestrador:
 
     def adicionar_arduinos(self, arduino):
         self.arduino = arduino
-        self.vincular_lcr(self.lcr)
+        self.arduino.vincular_lcr(self.lcr)
 
     def adicionar_lcr(self, lcr):
         self.lcr = lcr
@@ -87,6 +87,10 @@ class Orquestrador:
 
         shutil.rmtree(units_info_folder)
         os.mkdir(units_info_folder)
+        shutil.rmtree(units_lcr_info_folder)
+        os.mkdir(units_lcr_info_folder)
+        shutil.rmtree(units_arduino_info_folder)
+        os.mkdir(units_arduino_info_folder)
 
 
         self.processos = []

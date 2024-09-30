@@ -2,11 +2,70 @@ import os
 import json
 import time
 import serial
+import random
 
 from ..paths import units_lcr_info_folder
 
 TERMINATOR = "\n"
 ENCODING = "ascii"
+
+
+class LCRUnitTest:
+    def __init__(self, port, taxa_de_transmissao, parity='N', stopbits=1, bytesize=8, timeout=1):
+        self.name = "LCR"
+        self.ser = None
+        self.transport = None
+        self.protocol = None
+        self.thread = None
+        self.port = port
+        self.url = port
+        self.baudrate = 9600
+        self.parity = parity
+        self.stopbits = stopbits
+        self.bytesize = bytesize
+        self.timeout = timeout
+        self.ser_parameters = {
+            "url": self.url,
+            "baudrate": self.baudrate,
+            "stopbits": self.stopbits,
+            "bytesize": self.bytesize,
+            "timeout": self.timeout,
+        }
+        self.tempo_total_execucao = None
+        self.tempo_transcorrido = None        
+        self.numero_equipamento = '1_mock'
+        self.status = []
+        self.conectar()
+
+    def __repr__(self) -> str:
+        return f'LCR ID({self.numero_equipamento}:{self.port})'
+
+    def conectar(self, wait=None): pass
+
+    def desconectar(self): pass
+
+    def enviar_comando(self, comando): pass
+
+    def ler(self): pass
+
+    def enviar_comandos(self, comandos): pass
+
+    def ler_medidas(self):
+        resposta = []
+        for _ in range(10):
+            primario = random.randint(3, 7) / 100
+            secundario = random.randint(3, 7) / 100            
+            resposta.append(f'{primario},{secundario}')
+
+        self.status.append(f"[{time.ctime()}] => {self}: medindo...")
+        with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
+            json.dump(self.status, unit_status_file, indent=4)        
+
+        return resposta
+
+
+
+
 
 
 class LCRUnit:
