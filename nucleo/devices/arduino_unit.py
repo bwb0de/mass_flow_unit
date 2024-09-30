@@ -65,11 +65,15 @@ class ArduinoUnit:
             self.conectar()
         if self.tempo_transcorrido is None:
             self.tempo_transcorrido = 0
+
         self.enviar_comando('proximo_sensor')
+
         self.sensor_corrente = self.ler_resposta()
         self.valores_lcr = self.lcr.ler_medidas()
         set_value('sensor_corrente', self.sensor_corrente)
+
         tempo_step = 3
+
         self.tempo_transcorrido += tempo_step
         if self.tempo_transcorrido > self.tempo_total_execucao:
             return None

@@ -17,7 +17,7 @@ class Orquestrador:
         self.exp_max_flow = exp_max_flow
         self.unidades_mass_flow_produto = []
         self.unidades_mass_flow_ar = []
-        self.unidades_arduino = []
+        self.arduino = []
         self.lcr = None
         for unit in mass_flow_units:
             if unit.conteudo_fluxo == 'Ar':
@@ -49,8 +49,9 @@ class Orquestrador:
             print(f'Fração de fluxo: {unit.fracao_de_fluxo}')
             print('')
 
-    def adicionar_arduinos(self, arduinos):
-        self.unidades_arduino = arduinos
+    def adicionar_arduinos(self, arduino):
+        self.arduino = arduino
+        self.vincular_lcr(self.lcr)
 
     def adicionar_lcr(self, lcr):
         self.lcr = lcr
@@ -76,8 +77,7 @@ class Orquestrador:
         for unidade in self.unidades_mass_flow_produto:
             unidade.inserir_na_fila_execucao(self.script_ajustado_fluxo_tempo_produto)
 
-        for arduino in self.unidades_arduino:
-            arduino.definir_tempo_total_execucao(tempo_total)
+        self.arduino.definir_tempo_total_execucao(tempo_total)
 
 
     def executar_rotina(self):
@@ -96,6 +96,11 @@ class Orquestrador:
             processo.unit_status = unidade.numero_equipamento
             self.processos.append(processo)
             processo.start()
+
+
+        processo_arduino = Process(target=executa_subprocesso_arduino, args=(self.arduino, ))
+        self.processos.append(processo_arduino)
+        processo_arduino.start()
 
     def status_das_rotinas_em_execucao(self):
         retorno = []
