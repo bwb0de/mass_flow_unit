@@ -1,5 +1,9 @@
+import os
+import json
 import time
 import serial
+
+from ..paths import units_lcr_info_folder
 
 TERMINATOR = "\n"
 ENCODING = "ascii"
@@ -28,7 +32,11 @@ class LCRUnit:
         }
         self.tempo_total_execucao = None
         self.tempo_transcorrido = None        
+        self.numero_equipamento = 1
         self.conectar()
+
+    def __repr__(self) -> str:
+        return f'LCR ID({self.numero_equipamento}:{self.port})'
 
     def conectar(self, wait=None):
         self.ser = serial.serial_for_url(**self.ser_parameters, do_not_open=False)
@@ -63,8 +71,16 @@ class LCRUnit:
     def ler_medidas(self):
         respostas = []
         for _ in range(10):
-            resposta = self.enviar_comandos(["*TRG"])
+            resposta = self.enviar_comando("*TRG")
             respostas.append(resposta)
+
+        #Tratar respostas aqui e persistir em algum lugar...
+
+        self.status.append(f"[{time.ctime()}] => {self}: medindo...")
+        with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
+            json.dump(self.status, unit_status_file, indent=4)        
+
+
         return respostas
 
 

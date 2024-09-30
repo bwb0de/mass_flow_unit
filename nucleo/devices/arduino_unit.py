@@ -1,8 +1,12 @@
+import os
+import json
 import random
 import time
 import serial
 
 from nucleo.ipvh_srv import set_value
+
+from ..paths import units_arduino_info_folder
 
 class ArduinoUnitTest:
     def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None) -> None:
@@ -34,7 +38,12 @@ class ArduinoUnit:
         self.sensor_corrente = None
         self.tempo_total_execucao = None
         self.tempo_transcorrido = None
+        self.status = []
+        self.numero_equipamento = 1
         self.conectar()
+
+    def __repr__(self) -> str:
+        return f'Arduino ID({self.numero_equipamento}:{self.porta_de_conexao})'
 
     def definir_tempo_total_execucao(self, tempo):
         self.tempo_total_execucao = tempo
@@ -73,6 +82,10 @@ class ArduinoUnit:
         set_value('sensor_corrente', self.sensor_corrente)
 
         tempo_step = 3
+
+        self.status.append(f"[{time.ctime()}] => {self}: modificando sensor para {self.sensor_corrente}")
+        with open(f'{units_arduino_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
+            json.dump(self.status, unit_status_file, indent=4)        
 
         self.tempo_transcorrido += tempo_step
         if self.tempo_transcorrido > self.tempo_total_execucao:
