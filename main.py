@@ -1,5 +1,8 @@
+import random
 import os 
 import json
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from flask import jsonify, Flask
 from flask import render_template, request, redirect
@@ -13,6 +16,17 @@ os.chdir(root)
 
 ### Variáveis globais
 em_execucao = False
+
+s0 = []
+s1 = []
+s2 = []
+s3 = []
+s4 = []
+s5 = []
+s6 = []
+s7 = []
+
+
 app = Flask(__name__)
 
 
@@ -25,6 +39,22 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+@app.route('/monitor')
+def monitor():
+    return render_template('monitor.html')
+
+
+
+@app.route('/api/monitor')
+def monitor_api():
+    images = []
+    for i in range(8):
+        images.append(f'/static/img/S{i}.png')
+    return jsonify({'images': images})
+
+
 
 
 

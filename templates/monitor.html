@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+    <div class='container_do_corpo_da_pagina'>
+        <h1 class="titulo_documento">Monitor LCR</h1>
+        <h2 style="text-align: center;">
+            Gráficos das colunas <b style="color:blue">'Primary'</b> e <b style="color:red">'Secondary'</b> para cada sensor
+        </h2>
+        <div id="graficos" class="graph-container">
+            <!-- Aqui você cria tags <img> para cada gráfico -->
+            <img id="sensor0" src="/static/img/S0.png" alt="Gráfico Sensor 0">
+            <img id="sensor1" src="/static/img/S1.png" alt="Gráfico Sensor 1">
+            <img id="sensor2" src="/static/img/S2.png" alt="Gráfico Sensor 2">
+            <img id="sensor3" src="/static/img/S3.png" alt="Gráfico Sensor 3">
+            <img id="sensor4" src="/static/img/S4.png" alt="Gráfico Sensor 4">
+            <img id="sensor5" src="/static/img/S5.png" alt="Gráfico Sensor 5">
+            <img id="sensor6" src="/static/img/S6.png" alt="Gráfico Sensor 6">
+            <img id="sensor7" src="/static/img/S7.png" alt="Gráfico Sensor 7">
+        </div>
+
+        <script>
+            // Função para atualizar as imagens chamando a API
+            async function atualizarGraficos() {
+                try {
+                    const response = await fetch('/api/monitor');
+                    const data = await response.json();
+
+                    // Atualiza o src das imagens com as novas URLs
+                    document.getElementById('sensor0').src = data.images[0] + '?' + new Date().getTime();
+                    document.getElementById('sensor1').src = data.images[1] + '?' + new Date().getTime();
+                    document.getElementById('sensor2').src = data.images[2] + '?' + new Date().getTime();
+                    document.getElementById('sensor3').src = data.images[3] + '?' + new Date().getTime();
+                    document.getElementById('sensor4').src = data.images[4] + '?' + new Date().getTime();
+                    document.getElementById('sensor5').src = data.images[5] + '?' + new Date().getTime();
+                    document.getElementById('sensor6').src = data.images[6] + '?' + new Date().getTime();
+                    document.getElementById('sensor7').src = data.images[7] + '?' + new Date().getTime();
+                } catch (error) {
+                    console.error('Erro ao atualizar os gráficos:', error);
+                }
+            }
+
+            // Atualiza os gráficos a cada segundo (1000 ms)
+            setInterval(atualizarGraficos, 1000);
+        </script>
+
+        <br><br>
+        <div id="exp_info"></div>
+        <div><br><br><br><br></div>
+    </div>
+
+{% endblock %}
