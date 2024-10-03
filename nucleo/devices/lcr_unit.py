@@ -137,8 +137,12 @@ class LCRUnit:
         comandos = ["*TRG"]
         comandos *= self.numero_medidas
         resposta = self.enviar_comandos(comandos)
+        
+        #Tratar respostas aqui fazer conversões e retornar...
 
-        #Tratar respostas aqui e persistir em algum lugar...
+        
+
+
 
         self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:

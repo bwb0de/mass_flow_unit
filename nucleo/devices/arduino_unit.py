@@ -9,7 +9,7 @@ from nucleo.ipvh_srv import set_value
 from ..paths import units_arduino_info_folder
 
 class ArduinoUnitTest:
-    def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None, tempo_espera=3) -> None:
+    def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None, tempo_espera=2.2) -> None:
         modelos = {'uno': 14, 'mega': 54}
         assert(modelo in modelos), "Os modelos conhecidos são UNO ou MEGA..."
         self.nome = str(random.randint(0,1000)).zfill(4) if nome is None else nome
@@ -80,6 +80,8 @@ class ArduinoUnit:
         self.numero_equipamento = 1
         self.tempo_espera = tempo_espera
         self.conectar()
+        self.enviar_comando('r')                        #Desliga todos os pinos... 
+                                                        #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
 
     def __repr__(self) -> str:
         return f'Arduino ID({self.numero_equipamento}:{self.porta_de_conexao})'
@@ -114,10 +116,14 @@ class ArduinoUnit:
         if self.tempo_transcorrido is None:
             self.tempo_transcorrido = 0
 
-        self.enviar_comando('proximo_sensor')
+        self.enviar_comando('p')                        #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
 
-        self.sensor_corrente = self.ler_resposta()
+        self.sensor_corrente = f'S{self.ler_resposta()}'#Números match, A = 10; B = 11
         self.valores_lcr = self.lcr.ler_medidas()
+        self.construtor_grafico.gerar_grafico(
+            self.sensor_corrente, 
+            self.valores_lcr)                           #Retorna nome do gráfico na pasta static/img
+        
         set_value('sensor_corrente', self.sensor_corrente)
 
         tempo_step = self.tempo_espera

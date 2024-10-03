@@ -52,6 +52,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('1');
     }
 
     else if ( SensorStep == 2 ) {
@@ -66,6 +67,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('2');
     }
 
     else if ( SensorStep == 3 ) {
@@ -80,6 +82,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('3');
     }
 
     else if ( SensorStep == 4 ) {
@@ -94,6 +97,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('4');
     }
 
     else if ( SensorStep == 5 ) {
@@ -108,6 +112,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('5');
     }
 
     else if ( SensorStep == 6 ) {
@@ -122,6 +127,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('6');
     }
 
     else if ( SensorStep == 7 ) {
@@ -136,6 +142,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('7');
     }
 
     else if ( SensorStep == 8 ) {
@@ -150,6 +157,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('8');
     }
 
     else if ( SensorStep == 9 ) {
@@ -164,6 +172,7 @@ void loop() {
       digitalWrite(10, HIGH);
       digitalWrite(11, LOW);
       digitalWrite(12, LOW);
+      Serial.println('9');
     }
 
     else if ( SensorStep == 10 ) {
@@ -178,6 +187,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, HIGH);
       digitalWrite(12, LOW);
+      Serial.println('A'); //10
     }
 
     else if ( SensorStep == 11 ) {
@@ -192,6 +202,7 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
       digitalWrite(12, HIGH);
+      Serial.println('B'); //11
     }
 
   }
