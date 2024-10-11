@@ -119,10 +119,13 @@ class ArduinoUnit:
         self.enviar_comando('p')                        #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
 
         self.sensor_corrente = f'S{self.ler_resposta()}'#Números match, A = 10; B = 11
+        print(f"Sensor corrente: {self.sensor_corrente}")
         self.valores_lcr = self.lcr.ler_medidas()
-        self.construtor_grafico.gerar_grafico(
-            self.sensor_corrente, 
-            self.valores_lcr)                           #Retorna nome do gráfico na pasta static/img
+        print(self.valores_lcr)
+        
+        #self.construtor_grafico.gerar_grafico(
+        #    self.sensor_corrente, 
+        #    self.valores_lcr)                           #Retorna nome do gráfico na pasta static/img
         
         set_value('sensor_corrente', self.sensor_corrente)
 
