@@ -1,0 +1,105 @@
+{% extends 'layout.html' %}
+
+{% block page_info %}
+
+<form id="formulario_corrente" onsubmit="reunir_parametros_definidos(event)" nome="formulario_corrente" action="/parametros_experimento" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+
+    <div class="container_do_formulario">
+        <h1 class="titulo_documento"> Identidicação experimento &nbsp;</h1>
+
+        <div class="items-center align-middle text-center" id="parametros">
+
+            <div>
+                <div ><label for="pesquisador"><b>Pesquisador</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="pesquisador" name="pesquisador" value="{{ experimento['pesquisador'] }}" placeholder="Nome">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="substancia"><b>Substância pesquisada</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="substancia" name="substancia" value="{{ experimento['substancia'] }}" placeholder="ex.: Acetona...">
+                </div>
+            </div><br>
+
+            <h3 class="text-xl text-gray-700"><b>Informações dos sensores (tipo, descrição...):</b></h3><br>
+
+            <div>
+                <div ><label for="s1"><b>Sensor 1</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s1" name="s1" value="{{ experimento['s1'] }}">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="s2"><b>Sensor 2</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s2" name="s2" value="{{ experimento['s2'] }}">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="s3"><b>Sensor 3</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s3" name="s3" value="{{ experimento['s3'] }}">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="s4"><b>Sensor 4</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s4" name="s4" value="{{ experimento['s4'] }}">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="s5"><b>Sensor 5</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s5" name="s5" value="{{ experimento['s5'] }}">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="s6"><b>Sensor 6</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s6" name="s6" value="{{ experimento['s6'] }}">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="s7"><b>Sensor 7</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s7" name="s7" value="{{ experimento['s7'] }}">
+                </div>
+            </div><br>
+
+            <div>
+                <div ><label for="s8"><b>Sensor 8</b>:</label></div>
+                <div>
+                    <input type="text" class="p-2 bg-gray-50 mb-1" style="width: 15%; " id="s8" name="s8" value="{{ experimento['s8'] }}">
+                </div>
+            </div><br>
+
+
+        </div>
+
+
+
+
+    </div><br><br>
+    
+    <div style="height: 40%;"></div>
+
+    <input type="hidden" id="acumulador_de_parametros" name="acumulador_de_parametros">
+
+    <div class="items-center align-middle text-center flex-grow">
+        <button form="formulario_corrente" id="submeter_formulario" type="submit" class="bg-gray-800 text-white hover:text-teal hover:bg-gray-600 p-1 px-4 rounded-md">Gravar mudanças</button>
+    </div>
+
+</form>
+
+<br><br><br><br>
+
+{% endblock %}

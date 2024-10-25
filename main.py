@@ -10,7 +10,7 @@ from flask import render_template, request, redirect
 from nucleo.orquestrator_setup import inicializar_orquestrador_mass_flow #, inicializar_orquestrador_mass_flow_teste
 from nucleo.mass_flow_info_reader import update_info
 
-from nucleo.paths import root, parametros_mass_flow, arduino_config, lcr_config
+from nucleo.paths import root, parametros_mass_flow, arduino_config, lcr_config, experimento_config
 
 os.chdir(root)
 
@@ -113,6 +113,34 @@ def formulario_parametros_mass_flow():
         params = json.loads(params_file.read())
 
     return render_template('formulario_rotina.html', params=params)
+
+
+@app.route('/parametros_experimento', methods=['GET', 'POST'])
+def formulario_experimento():
+    if request.method == 'POST':
+        conf = [{
+            "pesquisador": request.form.get('pesquisador'),
+            "substancia": request.form.get('substancia'),
+            "s1": request.form.get('s1'),
+            "s2": request.form.get('s2'),
+            "s3": request.form.get('s3'),
+            "s4": request.form.get('s4'),
+            "s5": request.form.get('s5'),
+            "s6": request.form.get('s6'),
+            "s7": request.form.get('s7'),
+            "s8": request.form.get('s8')
+        }]
+        
+        with open(experimento_config, 'w') as arquivo_experimento:
+            json.dump(conf, arquivo_experimento, indent=4)
+        
+        return redirect('/')
+    
+    with open(experimento_config) as arquivo_experimento:
+        experimento = json.loads(arquivo_experimento.read())
+        print(experimento)
+
+    return render_template('formulario_experimento.html', experimento=experimento)
 
 
 @app.route('/parametros_arduino', methods=['GET', 'POST'])
