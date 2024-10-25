@@ -16,12 +16,6 @@
         "taxa_de_transmissao": 9600,
         "fluxo_maximo": 100,
         "conteudo_fluxo": "produto"
-    },
-    {
-        "porta": "COM4",
-        "taxa_de_transmissao": 9600,
-        "fluxo_maximo": 100,
-        "conteudo_fluxo": "produto"
     }
 ]
 

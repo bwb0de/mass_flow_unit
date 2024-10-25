@@ -29,6 +29,7 @@ def inicializar_orquestrador_mass_flow():
             arduino_unit = ArduinoUnit(unit['porta'], unit['taxa_de_transmissao'], unit['modelo'], unit['nome'], unit['tempo_espera'])
 
     print(arduino_unit)
+    arduino_unit.desconectar()
 
     lcr_unit = None
     with open(lcr_config) as arquivo_lcr_config:
@@ -38,6 +39,7 @@ def inicializar_orquestrador_mass_flow():
             lcr_unit = LCRUnit(definicoes['porta'], definicoes['taxa_de_transmissao'], definicoes['parity'], definicoes['stopbits'], definicoes['bytesize'], definicoes['timeout'], definicoes['numero_medidas'])
 
     print(lcr_unit)
+    lcr_unit.desconectar()
 
     o1 = Orquestrador(mass_flow_units, exp_max_flow=400)
     o1.adicionar_lcr(lcr_unit)

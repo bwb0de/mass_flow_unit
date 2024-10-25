@@ -187,6 +187,8 @@ class MassFlowUnit:
             'V,M'
         ])
 
+        return dados
+
         gas_idx, gas_name, current_mass_eng_unit, current_volum_eng_unit, totalizer1_mode, totalizer2_mode, analog_output, mod_buss = dados[0][1].split(',')
         mass_flow, volumetric_flow, total_meu_1, total_meu_2, gas_temp, gas_press, flow_alarm_st, temp_alarm_st, press_alarm_st, alarm_ev_register, diagnostic_ev_register = dados[1][1]
 

@@ -3,6 +3,7 @@ import json
 import time
 import serial
 import random
+import statistics
 
 from ..paths import units_lcr_info_folder
 
@@ -106,26 +107,31 @@ class LCRUnit:
         
 
     def desconectar(self):
-        self.ser.close()
+        try: self.ser.close()
+        except AttributeError: pass
+        self.ser = None
 
 
     def enviar_comando(self, comando):
+        if self.ser == None:
+            self.conectar()
         comando_teste = bytes(comando+f'{TERMINATOR}', ENCODING)# + b'\x10'
         self.ser.write(comando_teste)
         self.ser.flush()
         time.sleep(0.1)
-        resposta = self.ser.readline().decode().strip()
+        try: resposta = self.ser.readline().decode().strip()
+        except UnicodeDecodeError: resposta = ""
         return resposta
 
     def ler(self):
         resposta = self.ser.readline().decode().strip()
-        print(resposta)
+        #print(resposta)
 
     def enviar_comandos(self, comandos):
         respostas = []
         for msg in comandos:
             resposta = ''
-            print("Comando:", msg)
+            #print("Comando:", msg)
             while resposta == '':
                 resposta = self.enviar_comando(msg).strip()
                 self.ler()
@@ -134,21 +140,40 @@ class LCRUnit:
         return respostas
 
     def ler_medidas(self):
+        def ignore_trg_response(res):
+            if res == "*TRG":
+                return None
+            return res
+        
+        if self.ser is None:
+            self.conectar()
+
         comandos = ["*TRG"]
-        comandos *= self.numero_medidas
+        comandos *= int(self.numero_medidas)
         resposta = self.enviar_comandos(comandos)
         
-        #Tratar respostas aqui fazer conversões e retornar...
+        respostas_primarias = []
+        respostas_secundarias = []
+        resposta_processada = []
 
+        for linha in resposta:
+            if linha == '*TRG': continue
+            try:
+                valor_primario, valor_secundario = linha.split(",")
+                valor_primario, valor_secundario = float(valor_primario.replace("*TRG", "")), float(valor_secundario.replace("*TRG", ""))
+                #respostas_primarias.append(valor_primario)
+                #respostas_secundarias.append(valor_secundario)
+                resposta_processada.append((valor_primario, valor_secundario))
+            except ValueError: pass
         
-
-
+        #resposta_processada = (statistics.mean(respostas_primarias), statistics.mean(respostas_secundarias))
 
         self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
-
+        self.desconectar()
         return resposta
+        #return resposta_processada
 
 
 
