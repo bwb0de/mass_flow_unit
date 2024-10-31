@@ -42,7 +42,6 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
     global mostrar_dados_recebidos
     while True:
         data = client_socket.recv(1024).decode().strip()
-        print(data)
         if not data:
             break
         if data == 'exit': continue
@@ -66,7 +65,6 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
                json.dump(ipvh, arquivo_dados_sensores, indent=4)
 
             client_socket.send(" ".encode())
-            print(ipvh)
             
         elif instrucoes[0] == "get":
             
@@ -118,7 +116,9 @@ if __name__ == "__main__":
     except: pass
     os.chdir(f"{ano}_{mes}_{dia}-{hora}_{minuto}")
     diretorio_corrente_dados = os.getcwd()
-    with open("info_sensores.txt", 'w') as arquivo_sensores:
+    with open("info_experimento_sensores.txt", 'w') as arquivo_sensores:
+        arquivo_sensores.write(f"Pesquisador: {nome_pesquisador}\n")
+        arquivo_sensores.write(f"Substancia: {nome_substancia}\n")
         arquivo_sensores.write(f"Sensor 1: {info[0]["s1"]}\n")
         arquivo_sensores.write(f"Sensor 2: {info[0]["s2"]}\n")
         arquivo_sensores.write(f"Sensor 3: {info[0]["s3"]}\n")
