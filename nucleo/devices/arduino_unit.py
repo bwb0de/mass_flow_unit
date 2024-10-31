@@ -122,12 +122,13 @@ class ArduinoUnit:
         print(f"Sensor corrente: {self.sensor_corrente}")
         self.valores_lcr = self.lcr.ler_medidas()
         print(self.valores_lcr)
+        self.valores_lcr = str(self.valores_lcr).replace(", ", ":::")
         
         #self.construtor_grafico.gerar_grafico(
         #    self.sensor_corrente, 
         #    self.valores_lcr)                           #Retorna nome do gráfico na pasta static/img
         
-        set_value('sensor_corrente', self.sensor_corrente)
+        set_value('sensor_corrente', f"{self.sensor_corrente}=>{self.valores_lcr}")
 
         tempo_step = self.tempo_espera
 
