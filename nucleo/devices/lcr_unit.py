@@ -161,19 +161,19 @@ class LCRUnit:
             try:
                 valor_primario, valor_secundario = linha.split(",")
                 valor_primario, valor_secundario = float(valor_primario.replace("*TRG", "")), float(valor_secundario.replace("*TRG", ""))
-                #respostas_primarias.append(valor_primario)
-                #respostas_secundarias.append(valor_secundario)
+                respostas_primarias.append(valor_primario)
+                respostas_secundarias.append(valor_secundario)
                 resposta_processada.append((valor_primario, valor_secundario))
             except ValueError: pass
         
-        #resposta_processada = (statistics.mean(respostas_primarias), statistics.mean(respostas_secundarias))
+        resposta_processada = (statistics.mean(respostas_primarias), statistics.mean(respostas_secundarias))
 
         self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
         self.desconectar()
-        return resposta
-        #return resposta_processada
+        #return resposta
+        return resposta_processada
 
 
 
