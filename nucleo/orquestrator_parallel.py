@@ -11,6 +11,8 @@ from nucleo.devices.lcr_unit import LCRUnit
 
 from .paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
 
+finaliza_rotina = False
+
 class Orquestrador:
     def __init__(self, mass_flow_units:list=[], exp_max_flow=200) -> None:
         self.mass_flow_units = mass_flow_units
@@ -138,14 +140,18 @@ def executa_subprocesso_mass_flow(objeto: MassFlowUnit):
         tempo_espera = objeto.executar_acao_da_fila()
         if tempo_espera is None: break
         time.sleep(tempo_espera)
+    global finaliza_rotina
+    finaliza_rotina = True
 
 
 
 def executa_subprocesso_arduino(objeto: ArduinoUnit):
+    global finaliza_rotina
     tempo_espera = objeto.executar_acao_da_fila()
     time.sleep(tempo_espera)
     while True:
         tempo_espera = objeto.executar_acao_da_fila()
         if tempo_espera is None: break
         time.sleep(tempo_espera)
+        if finaliza_rotina: break
 

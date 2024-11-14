@@ -3,10 +3,11 @@ import socket
 import json
 import datetime
 import shutil
+import time
 
 pasta_dados_experimento = "C:\\Users\\Mauro\\Desktop\\Dados Experimentos"
 arquivo_dados_experimento = "C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\config\\experimento.json"
-
+diretorio_corrente_dados = None
 
 
 
@@ -24,7 +25,7 @@ ipvh = {'sensor_loop':
             'sensor_corrente': ""
         }
 
-def start_server(diretorio_corrente_dados, mostrar_dados_recebido=True):
+def start_server(mostrar_dados_recebido=True):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host = '127.0.0.1'
     port = 11112
@@ -45,6 +46,9 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
         if not data:
             break
         if data == 'exit': continue
+
+        if data == 'update_exp':
+            mudar_parametros_experimento()
 
         instrucoes = data.strip().split(' ')
 
@@ -72,6 +76,17 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
             client_socket.send(valor.encode())
 
 
+def send_command(command):
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    host = '127.0.0.1'
+    port = 11112
+    client_socket.connect((host, port))
+    data_to_send = f'{command}'
+    client_socket.send(data_to_send.encode())
+    data = client_socket.recv(1024).decode().strip()
+    client_socket.close()
+
+
 def set_value(key, value):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host = '127.0.0.1'
@@ -95,7 +110,9 @@ def get_value(key):
     return data
 
 
-if __name__ == "__main__":
+def mudar_parametros_experimento():
+    print('Atualizando dados da experiência...')
+    time.sleep(1)
     with open(arquivo_dados_experimento, 'r') as dados_experimento:
         info = dados_experimento.read()
         info = json.loads(info)
@@ -104,7 +121,6 @@ if __name__ == "__main__":
     nome_pesquisador = info[0]["pesquisador"]
     nome_substancia = info[0]["substancia"]
     ano, mes, dia, hora, minuto = datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day, datetime.datetime.today().hour, datetime.datetime.today().minute
-    init_folder = os.getcwd()
     os.chdir(pasta_dados_experimento)
     try: os.mkdir(nome_pesquisador)
     except: pass
@@ -115,6 +131,7 @@ if __name__ == "__main__":
     try: os.mkdir(f"{ano}_{mes}_{dia}-{hora}_{minuto}")
     except: pass
     os.chdir(f"{ano}_{mes}_{dia}-{hora}_{minuto}")
+    global diretorio_corrente_dados
     diretorio_corrente_dados = os.getcwd()
     with open("info_experimento_sensores.txt", 'w') as arquivo_sensores:
         arquivo_sensores.write(f"Pesquisador: {nome_pesquisador}\n")
@@ -126,9 +143,12 @@ if __name__ == "__main__":
         arquivo_sensores.write(f"Sensor 5: {info[0]["s5"]}\n")
         arquivo_sensores.write(f"Sensor 6: {info[0]["s6"]}\n")
         arquivo_sensores.write(f"Sensor 7: {info[0]["s7"]}\n")
-        arquivo_sensores.write(f"Sensor 8: {info[0]["s8"]}\n")
+        arquivo_sensores.write(f"Sensor 8: {info[0]["s8"]}\n")    
 
-    start_server(diretorio_corrente_dados)
+
+if __name__ == "__main__":
+    mudar_parametros_experimento()
+    start_server()
 
 
 

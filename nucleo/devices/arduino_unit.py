@@ -116,9 +116,9 @@ class ArduinoUnit:
         if self.tempo_transcorrido is None:
             self.tempo_transcorrido = 0
 
-        self.enviar_comando('p')                        #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
+        self.enviar_comando('p')                         #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
 
-        self.sensor_corrente = f'S{self.ler_resposta()}'#Números match, A = 10; B = 11
+        self.sensor_corrente = f'S{self.ler_resposta()}' #Números match, A = 10; B = 11
         print(f"Sensor corrente: {self.sensor_corrente}")
         self.valores_lcr = self.lcr.ler_medidas()
         print(self.valores_lcr)

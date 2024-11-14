@@ -16,7 +16,7 @@ arduino_unit.enviar_comando('r')
 for _ in range(1000):
     arduino_unit.enviar_comando('p')
     print(f'S{arduino_unit.ler_resposta()}')
-    time.sleep(6)
+    time.sleep(1)
 arduino_unit.enviar_comando('r')
 arduino_unit.desconectar()
 print("")

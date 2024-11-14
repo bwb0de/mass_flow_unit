@@ -9,7 +9,6 @@ from flask import render_template, request, redirect
 
 from nucleo.orquestrator_setup import inicializar_orquestrador_mass_flow #, inicializar_orquestrador_mass_flow_teste
 from nucleo.mass_flow_info_reader import update_info
-
 from nucleo.paths import root, parametros_mass_flow, arduino_config, lcr_config, experimento_config
 
 os.chdir(root)
@@ -133,6 +132,8 @@ def formulario_experimento():
         
         with open(experimento_config, 'w') as arquivo_experimento:
             json.dump(conf, arquivo_experimento, indent=4)
+
+        os.system('python {root}\\nucleo\\update_experiment_info.py')
         
         return redirect('/')
     
