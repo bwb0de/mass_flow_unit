@@ -50,6 +50,9 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
         if data == 'update_exp':
             mudar_parametros_experimento()
 
+        if data == 'update_time':
+            pass
+
         instrucoes = data.strip().split(' ')
 
         if instrucoes[0] == "set":

@@ -76,6 +76,8 @@ def mass_flow_stop():
     global em_execucao, orq_mass_flow
     em_execucao = False
     orq_mass_flow.interromper()
+    os.system('python {root}\\nucleo\\update_experiment_info.py')
+    os.system('python {root}\\nucleo\\update_experiment_time.py')
     return jsonify("Procedimento interrompido...")
 
 
