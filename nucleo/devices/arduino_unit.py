@@ -120,7 +120,7 @@ class ArduinoUnit:
 
         self.sensor_corrente = f'S{self.ler_resposta()}' #Números match, A = 10; B = 11
         print(f"Sensor corrente: {self.sensor_corrente}")
-        time.sleep(0.2)
+        time.sleep(0.4)
         self.valores_lcr = self.lcr.ler_medidas()
         print(self.valores_lcr)
         self.valores_lcr = str(self.valores_lcr).replace(", ", ":::")

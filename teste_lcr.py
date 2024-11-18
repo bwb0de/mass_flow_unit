@@ -12,7 +12,7 @@ with open(lcr_config) as arquivo_lcr_config:
         lcr_unit = LCRUnit(definicoes['porta'], definicoes['taxa_de_transmissao'], definicoes['parity'], definicoes['stopbits'], definicoes['bytesize'], definicoes['timeout'], definicoes['numero_medidas'])
 
 print(lcr_unit)
-for _ in range(1000):
+for _ in range(3):
     print(lcr_unit.ler_medidas())
 lcr_unit.desconectar()
 print("")

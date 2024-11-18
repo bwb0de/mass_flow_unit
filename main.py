@@ -4,6 +4,8 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from multiprocessing import Process
+
 from flask import jsonify, Flask
 from flask import render_template, request, redirect
 
@@ -54,6 +56,9 @@ def monitor_api():
     return jsonify({'images': images})
 
 
+def ipvh_subprocess():
+    try: os.system(f'python {root}\\nucleo\\ipvh_srv.py')
+    except: pass
 
 
 
@@ -64,20 +69,24 @@ def mass_flow_run():
     lista_fluxo_nao_ar_tempo = None
     with open(parametros_mass_flow, 'r') as arquivo_parametros:
         lista_fluxo_nao_ar_tempo = json.loads(arquivo_parametros.read())
+
+    processo_ipvh = Process(target=ipvh_subprocess)
+    processo_ipvh.start()
+
     orq_mass_flow = inicializar_orquestrador_mass_flow()
     orq_mass_flow.distribuir_fluxo_nas_unidades(lista_fluxo_nao_ar_tempo)
     orq_mass_flow.executar_rotina()
+
     return jsonify("Procedimento iniciado...")
 
 
 
 @app.route('/api/stop')
 def mass_flow_stop():
+    os.system(f'python {root}\\nucleo\\kill_ipvh_srv.py&')
     global em_execucao, orq_mass_flow
     em_execucao = False
     orq_mass_flow.interromper()
-    os.system('python {root}\\nucleo\\update_experiment_info.py')
-    os.system('python {root}\\nucleo\\update_experiment_time.py')
     return jsonify("Procedimento interrompido...")
 
 
@@ -135,8 +144,6 @@ def formulario_experimento():
         with open(experimento_config, 'w') as arquivo_experimento:
             json.dump(conf, arquivo_experimento, indent=4)
 
-        os.system('python {root}\\nucleo\\update_experiment_info.py')
-        
         return redirect('/')
     
     with open(experimento_config) as arquivo_experimento:

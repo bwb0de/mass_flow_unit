@@ -5,8 +5,20 @@ import datetime
 import shutil
 import time
 
+from pprint import pprint
+
 pasta_dados_experimento = "C:\\Users\\Mauro\\Desktop\\Dados Experimentos"
 arquivo_dados_experimento = "C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\config\\experimento.json"
+
+production_root = 'C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit'
+development_root1 = 'C:\\Users\\Daniel Cruz\\Documents\\Devel\\python\\mass_flow_unit'
+development_root2 = '/home/danielc/Documentos/Devel/GitHub/mass_flow_unit'
+root = production_root
+
+experimento_ultimos_parametros_windows = f"{root}\\config\\experimento_ultimos_parametros_tempo.txt"
+experimento_ultimos_parametros_linux = f"{root}/config/experimento_ultimos_parametros_tempo.txt"
+experimento_ultimos_parametros = experimento_ultimos_parametros_windows
+
 diretorio_corrente_dados = None
 
 
@@ -45,13 +57,9 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
         data = client_socket.recv(1024).decode().strip()
         if not data:
             break
-        if data == 'exit': continue
-
-        if data == 'update_exp':
-            mudar_parametros_experimento()
-
-        if data == 'update_time':
-            pass
+        
+        if data == 'exit':
+            exit()
 
         instrucoes = data.strip().split(' ')
 
@@ -114,12 +122,15 @@ def get_value(key):
 
 
 def mudar_parametros_experimento():
+    print(os.linesep)
     print('Atualizando dados da experiência...')
     time.sleep(1)
     with open(arquivo_dados_experimento, 'r') as dados_experimento:
         info = dados_experimento.read()
         info = json.loads(info)
-        print(info)
+        print(os.linesep)
+        pprint(info)
+        print(os.linesep)
     
     nome_pesquisador = info[0]["pesquisador"]
     nome_substancia = info[0]["substancia"]
@@ -136,6 +147,10 @@ def mudar_parametros_experimento():
     os.chdir(f"{ano}_{mes}_{dia}-{hora}_{minuto}")
     global diretorio_corrente_dados
     diretorio_corrente_dados = os.getcwd()
+
+    with open(experimento_ultimos_parametros, 'w') as dados_experimento_ultimos_par:
+        dados_experimento_ultimos_par.write(diretorio_corrente_dados)
+
     with open("info_experimento_sensores.txt", 'w') as arquivo_sensores:
         arquivo_sensores.write(f"Pesquisador: {nome_pesquisador}\n")
         arquivo_sensores.write(f"Substancia: {nome_substancia}\n")

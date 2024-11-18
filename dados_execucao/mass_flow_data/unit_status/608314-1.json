@@ -1,3 +1,5 @@
 [
-    "[Thu Nov 14 17:11:07 2024] => MassFlowUnit ID(608314-1:COM7)[p]: definindo fluxo para 0.0"
+    "[Mon Nov 18 13:42:20 2024] => MassFlowUnit ID(608314-1:COM7)[p]: definindo fluxo para 4.0",
+    "[Mon Nov 18 13:44:00 2024] => MassFlowUnit ID(608314-1:COM7)[p]: definindo fluxo para 8.0",
+    "[Mon Nov 18 13:45:40 2024] => MassFlowUnit ID(608314-1:COM7)[p]: fechando fluxo..."
 ]

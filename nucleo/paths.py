@@ -35,6 +35,10 @@ experimento_config_windows = f"{root}\\config\\experimento.json"
 experimento_config_linux = f"{root}/config/experimento.json"
 experimento_config = experimento_config_windows
 
+
+
+
 lcr_config_windows = f"{root}\\config\\lcr.json"
 lcr_config_linux = f"{root}/config/lcr.json"
 lcr_config = lcr_config_windows
+

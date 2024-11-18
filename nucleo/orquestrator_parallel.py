@@ -7,6 +7,7 @@ from multiprocessing import Process
 from nucleo.devices.mass_flow_unit import MassFlowUnit
 from nucleo.devices.arduino_unit import ArduinoUnit
 from nucleo.devices.lcr_unit import LCRUnit
+from nucleo.paths import root
 
 
 from .paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
@@ -142,6 +143,8 @@ def executa_subprocesso_mass_flow(objeto: MassFlowUnit):
         time.sleep(tempo_espera)
     global finaliza_rotina
     finaliza_rotina = True
+    os.system(f'python {root}\\nucleo\\construtor_tabela_resultados.py&')
+    os.system(f'python {root}\\nucleo\\kill_ipvh_srv.py&')
 
 
 

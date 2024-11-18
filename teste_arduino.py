@@ -13,7 +13,7 @@ with open(arduino_config) as arquivo_arduino_config:
 
 print(arduino_unit)
 arduino_unit.enviar_comando('r')
-for _ in range(1000):
+for _ in range(4):
     arduino_unit.enviar_comando('p')
     print(f'S{arduino_unit.ler_resposta()}')
     time.sleep(1)
