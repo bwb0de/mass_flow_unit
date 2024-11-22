@@ -103,7 +103,7 @@ class LCRUnit:
 
     def conectar(self, wait=None):
         self.ser = serial.serial_for_url(**self.ser_parameters, do_not_open=False)
-        time.sleep(2)
+        time.sleep(0.7)
         
 
     def desconectar(self):
