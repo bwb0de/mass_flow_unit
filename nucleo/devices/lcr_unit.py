@@ -103,7 +103,7 @@ class LCRUnit:
 
     def conectar(self, wait=None):
         self.ser = serial.serial_for_url(**self.ser_parameters, do_not_open=False)
-        time.sleep(0.7)
+        time.sleep(1)
         
 
     def desconectar(self):
@@ -124,14 +124,18 @@ class LCRUnit:
         return resposta
 
     def ler(self):
+        try:
+            self.ser.reset_input_buffer()
+            self.ser.reset_output_buffer()
+        except AttributeError: pass
         resposta = self.ser.readline().decode().strip()
-        #print(resposta)
+        return resposta
+
 
     def enviar_comandos(self, comandos):
         respostas = []
         for msg in comandos:
             resposta = ''
-            #print("Comando:", msg)
             while resposta == '':
                 resposta = self.enviar_comando(msg).strip()
                 self.ler()
@@ -139,28 +143,24 @@ class LCRUnit:
             respostas.append(resposta)
         return respostas
 
+
     def ler_medidas(self):
-        def ignore_trg_response(res):
-            if res == "*TRG":
-                return None
-            return res
-        
         if self.ser is None:
             self.conectar()
 
-        comandos = ["*TRG"]
-        comandos *= int(self.numero_medidas)
-        resposta = self.enviar_comandos(comandos)
+        respostas = []
+        for _ in range(int(self.numero_medidas)):
+            resposta = self.ler()
+            respostas.append(resposta)
         
         respostas_primarias = []
         respostas_secundarias = []
         resposta_processada = []
 
-        for linha in resposta:
-            if linha == '*TRG': continue
+        for linha in respostas:
             try:
                 valor_primario, valor_secundario = linha.split(",")
-                valor_primario, valor_secundario = float(valor_primario.replace("*TRG", "")), float(valor_secundario.replace("*TRG", ""))
+                valor_primario, valor_secundario = float(valor_primario), float(valor_secundario)
                 respostas_primarias.append(valor_primario)
                 respostas_secundarias.append(valor_secundario)
                 resposta_processada.append((valor_primario, valor_secundario))
@@ -169,10 +169,10 @@ class LCRUnit:
         resposta_processada = (statistics.mean(respostas_primarias), statistics.mean(respostas_secundarias))
 
         self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
+
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
-        self.desconectar()
-        #return resposta
+
         return resposta_processada
 
 
