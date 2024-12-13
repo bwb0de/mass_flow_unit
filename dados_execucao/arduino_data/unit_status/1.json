@@ -17733,5 +17733,11 @@
     "[Fri Dec 13 16:03:40 2024] => Arduino ID(1:COM10): modificando sensor para S2",
     "[Fri Dec 13 16:03:45 2024] => Arduino ID(1:COM10): modificando sensor para S3",
     "[Fri Dec 13 16:03:50 2024] => Arduino ID(1:COM10): modificando sensor para S4",
-    "[Fri Dec 13 16:03:55 2024] => Arduino ID(1:COM10): modificando sensor para S5"
+    "[Fri Dec 13 16:03:55 2024] => Arduino ID(1:COM10): modificando sensor para S5",
+    "[Fri Dec 13 16:04:00 2024] => Arduino ID(1:COM10): modificando sensor para S6",
+    "[Fri Dec 13 16:04:05 2024] => Arduino ID(1:COM10): modificando sensor para S7",
+    "[Fri Dec 13 16:04:10 2024] => Arduino ID(1:COM10): modificando sensor para S8",
+    "[Fri Dec 13 16:04:15 2024] => Arduino ID(1:COM10): modificando sensor para S1",
+    "[Fri Dec 13 16:04:20 2024] => Arduino ID(1:COM10): modificando sensor para S2",
+    "[Fri Dec 13 16:04:24 2024] => Arduino ID(1:COM10): modificando sensor para S3"
 ]
