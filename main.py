@@ -112,10 +112,15 @@ def mass_flow_check():
 def formulario_parametros_mass_flow():
     if request.method == 'POST':
         with open(parametros_mass_flow, 'w') as params_file:
+            if request.form['acumulador_de_parametros'] == '[]':
+                json.dump([[0,0]], params_file, indent=4)
+                return redirect('/')
+
             dados = request.form['acumulador_de_parametros'].strip('[[').strip(']]').strip('"').replace('","',',').split("],[")
             dados_convertidos = [fluxo_tempo.replace('"',"").split(',') for fluxo_tempo in dados]
             dados_convertidos = [(float(fluxo), int(tempo)) for fluxo, tempo in dados_convertidos]
             json.dump(dados_convertidos, params_file, indent=4)
+            
 
         return redirect('/')
     
