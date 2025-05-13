@@ -166,7 +166,7 @@ class LCRUnit:
                 resposta_processada.append((valor_primario, valor_secundario))
             except ValueError: pass
         
-        resposta_processada = (statistics.mean(respostas_primarias), statistics.mean(respostas_secundarias))
+        resposta_processada = (statistics.median(respostas_primarias), statistics.median(respostas_secundarias))
 
         self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
 
