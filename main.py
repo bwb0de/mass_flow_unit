@@ -1,8 +1,8 @@
-import random
+#import random
 import os 
 import json
-import pandas as pd
-import matplotlib.pyplot as plt
+#import pandas as pd
+#import matplotlib.pyplot as plt
 
 from multiprocessing import Process
 
@@ -17,6 +17,7 @@ os.chdir(root)
 
 ### Variáveis globais
 em_execucao = False
+etapas_microciclo = 100000
 
 s0 = []
 s1 = []
@@ -73,7 +74,7 @@ def mass_flow_run():
     processo_ipvh = Process(target=ipvh_subprocess)
     processo_ipvh.start()
 
-    orq_mass_flow = inicializar_orquestrador_mass_flow()
+    orq_mass_flow = inicializar_orquestrador_mass_flow(etapas_microciclo)
     orq_mass_flow.distribuir_fluxo_nas_unidades(lista_fluxo_nao_ar_tempo)
     orq_mass_flow.executar_rotina()
 
@@ -111,6 +112,8 @@ def mass_flow_check():
 @app.route('/parametros_mass_flow', methods=['GET', 'POST'])
 def formulario_parametros_mass_flow():
     if request.method == 'POST':
+        global etapas_microciclo
+        etapas_microciclo = int(request.form['etapas_microciclo'])
         with open(parametros_mass_flow, 'w') as params_file:
             if request.form['acumulador_de_parametros'] == '[]':
                 json.dump([[0,0]], params_file, indent=4)
@@ -120,8 +123,6 @@ def formulario_parametros_mass_flow():
             dados_convertidos = [fluxo_tempo.replace('"',"").split(',') for fluxo_tempo in dados]
             dados_convertidos = [(float(fluxo), int(tempo)) for fluxo, tempo in dados_convertidos]
             json.dump(dados_convertidos, params_file, indent=4)
-            
-
         return redirect('/')
     
     with open(parametros_mass_flow, 'r') as params_file:

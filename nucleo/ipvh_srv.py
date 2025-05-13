@@ -46,7 +46,7 @@ def start_server(mostrar_dados_recebido=True):
     print(f"Servidor IPVH escutando em {host}:{port}")
     while True:
         client_socket, addr = server_socket.accept()
-        print(f"Conexão recebida de {addr}")
+        print(f"conn nfo: {addr} => ", end="")
         handle_client(diretorio_corrente_dados, client_socket)
         
 
@@ -60,6 +60,9 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
         
         if data == 'exit':
             exit()
+        elif data == '@':
+            print('@@@@@@@@@@@@@@@@@')
+            client_socket.send(" ".encode())
 
         instrucoes = data.strip().split(' ')
 
@@ -67,6 +70,7 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
             variavel = instrucoes[1]
             valor = instrucoes[2]
             ipvh[variavel] = valor
+            print(variavel, valor)
             sensor, dados = valor.split("=>")
             primario, secundario = dados[1:-2].split(":::")
             primario, secundario = float(primario), float(secundario)
@@ -82,9 +86,10 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
             client_socket.send(" ".encode())
             
         elif instrucoes[0] == "get":
-            
             valor = ipvh[instrucoes[1]]
             client_socket.send(valor.encode())
+
+        
 
 
 def send_command(command):
