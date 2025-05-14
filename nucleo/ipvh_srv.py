@@ -2,7 +2,6 @@ import os
 import socket
 import json
 import datetime
-import shutil
 import time
 
 from pprint import pprint
@@ -21,7 +20,7 @@ experimento_ultimos_parametros = experimento_ultimos_parametros_windows
 
 diretorio_corrente_dados = None
 
-
+contador_mensagens_recebidas = 0
 
 ipvh = {'sensor_loop': 
         {
@@ -53,6 +52,9 @@ def start_server(mostrar_dados_recebido=True):
 
 def handle_client(diretorio_corrente_dados, client_socket) -> str:
     global mostrar_dados_recebidos
+    global contador_mensagens_recebidas
+    contador_mensagens_recebidas += 1
+
     while True:
         data = client_socket.recv(1024).decode().strip()
         if not data:
@@ -60,8 +62,14 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
         
         if data == 'exit':
             exit()
+
         elif data == '@':
-            print('@@@@@@@@@@@@@@@@@')
+            if contador_mensagens_recebidas > 6:
+                contador_mensagens_recebidas = 0
+                for sensor in ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8']:
+                    ipvh['sensor_loop'][sensor]["primary"].append('@')
+                    ipvh['sensor_loop'][sensor]["secondary"].append('@')
+
             client_socket.send(" ".encode())
 
         instrucoes = data.strip().split(' ')

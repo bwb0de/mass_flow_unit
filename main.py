@@ -94,7 +94,7 @@ def mass_flow_stop():
 
 @app.route('/api/equipo')
 def mass_flow_equipo():
-    orq_mass_flow = inicializar_orquestrador_mass_flow()
+    orq_mass_flow = inicializar_orquestrador_mass_flow(etapas_microciclo)
     dados = jsonify(orq_mass_flow.status_equipamentos())
     del(orq_mass_flow)
     return dados
