@@ -5,6 +5,7 @@ import json
 import random
 
 from ..globals.paths import units_info_folder
+from ..globals import logger
 from ..ipvh_srv import send_command
 
 class MassFlowUnitTest:
@@ -167,7 +168,7 @@ class MassFlowUnit:
                 return respostas
 
         except serial.SerialException as e:
-            print(f"Erro ao conectar na porta serial: {e}")    
+            logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Erro ao conectar na porta serial: {e}")
             return "Erro"    
 
     def enviar_comando(self, comando: str):
@@ -179,7 +180,7 @@ class MassFlowUnit:
                 return resposta
 
         except serial.SerialException as e:
-            print(f"Erro ao conectar na porta serial: {e}")        
+            logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Erro ao conectar na porta serial: {e}")            
 
     def obter_estado_equipamento(self):
         dados = self.enviar_comandos([
