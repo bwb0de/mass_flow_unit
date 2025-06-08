@@ -1,5 +1,0 @@
-pyserial
-Flask
-requests
-matplotlib
-openpyxl
