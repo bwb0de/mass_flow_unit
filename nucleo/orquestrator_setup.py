@@ -10,9 +10,12 @@ from .globals.paths import mass_flow_config
 from .globals.paths import arduino_config
 from .globals.paths import lcr_config
 
+from .globals import logger
 
+EXP_MAX_FLOW=400
 
 def inicializar_orquestrador_mass_flow(etapas_microciclo):
+    logger.escrever("[ORQUESTRADOR] Criando instâncias a partir dos arquivos de configuração...") 
     mass_flow_units = []
     with open(mass_flow_config) as arquivo_mass_flow_config:
         definicoes = json.loads(arquivo_mass_flow_config.read())
@@ -21,7 +24,7 @@ def inicializar_orquestrador_mass_flow(etapas_microciclo):
             mass_flow_units.append(mass_flow_unit)
             mass_flow_unit.etapas_microciclo = etapas_microciclo
 
-
+    logger.escrever(f"[ORQUESTRADOR] Crianda {len(mass_flow_units)} instâncias MassFlow com flow máximo de {EXP_MAX_FLOW}...") 
     print(mass_flow_units)
 
     arduino_unit = None
@@ -30,6 +33,7 @@ def inicializar_orquestrador_mass_flow(etapas_microciclo):
         for unit in definicoes:
             arduino_unit = ArduinoUnit(unit['porta'], unit['taxa_de_transmissao'], unit['modelo'], unit['nome'], unit['tempo_espera'])
 
+    logger.escrever(f"[ORQUESTRADOR] Crianda instância Arduino...") 
     print(arduino_unit)
     arduino_unit.desconectar()
 
@@ -40,13 +44,16 @@ def inicializar_orquestrador_mass_flow(etapas_microciclo):
             definicoes = definicoes[0]
             lcr_unit = LCRUnit(definicoes['porta'], definicoes['taxa_de_transmissao'], definicoes['parity'], definicoes['stopbits'], definicoes['bytesize'], definicoes['timeout'], definicoes['numero_medidas'])
 
+    logger.escrever(f"[ORQUESTRADOR] Crianda instância LCR...") 
     print(lcr_unit)
     lcr_unit.desconectar()
 
-    o1 = Orquestrador(mass_flow_units, exp_max_flow=400)
+    logger.escrever(f"[ORQUESTRADOR] Vinculando instâncias ao orquestrador...") 
+    o1 = Orquestrador(mass_flow_units, exp_max_flow=EXP_MAX_FLOW)
     o1.adicionar_lcr(lcr_unit)
     o1.adicionar_arduinos(arduino_unit)
-    
+
+    logger.escrever(f"[ORQUESTRADOR] Devolvendo intancia orquestradora ao flask...") 
     return o1
 
 
@@ -74,7 +81,7 @@ def inicializar_orquestrador_mass_flow_teste():
             for unit in definicoes:
                 lcr_unit = LCRUnitTest(unit['porta'], unit['taxa_de_transmissao'], numero_medidas=unit['numero_medidas'])
 
-    o1 = Orquestrador(mass_flow_units, exp_max_flow=400)
+    o1 = Orquestrador(mass_flow_units, exp_max_flow=EXP_MAX_FLOW)
     o1.adicionar_lcr(lcr_unit)
     o1.adicionar_arduinos(arduino_unit)
     

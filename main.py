@@ -73,11 +73,17 @@ def mass_flow_run():
     with open(parametros_mass_flow, 'r') as arquivo_parametros:
         lista_fluxo_nao_ar_tempo = json.loads(arquivo_parametros.read())
 
+    logger.escrever(f"[FLASK-APP] Iniciando IPVH em segundo plano...") 
     processo_ipvh = Process(target=ipvh_subprocess)
     processo_ipvh.start()
 
+    logger.escrever(f"[FLASK-APP] Comunicando com orquestrador...") 
     orq_mass_flow = inicializar_orquestrador_mass_flow(etapas_microciclo)
+    
+    logger.escrever(f"[FLASK-APP] Solicitando ao orquestrador a distribuição de fluxo nas unidades MassFlow...") 
     orq_mass_flow.distribuir_fluxo_nas_unidades(lista_fluxo_nao_ar_tempo)
+    
+    logger.escrever(f"[FLASK-APP] Solicitando ao orquestrador inicio da execução da rotina...") 
     orq_mass_flow.executar_rotina()
 
     return jsonify("Procedimento iniciado...")
@@ -85,7 +91,8 @@ def mass_flow_run():
 
 
 @app.route('/api/stop')
-def mass_flow_stop():
+def mass_flow_stop():    
+    logger.escrever(f"[FLASK-APP] Delegando ao script auxiliar o encerramento do servidor IPVH...") 
     os.system(f'python {root}\\nucleo\\kill_ipvh_srv.py&')
     global em_execucao, orq_mass_flow
     em_execucao = False

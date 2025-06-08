@@ -1,4 +1,3 @@
-import json
 import time
 import os
 import shutil
@@ -6,11 +5,11 @@ import shutil
 from multiprocessing import Process
 from nucleo.devices.mass_flow_unit import MassFlowUnit
 from nucleo.devices.arduino_unit import ArduinoUnit
-from nucleo.devices.lcr_unit import LCRUnit
 from nucleo.globals.paths import root
 
 
 from .globals.paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
+from .globals import logger
 
 finaliza_rotina = False
 
@@ -60,6 +59,7 @@ class Orquestrador:
         self.lcr = lcr
     
     def distribuir_fluxo_nas_unidades(self, lista_fluxo_nao_ar_tempo:list):
+        logger.escrever(f"[ORQUESTRADOR] Distribuindo fluxo nas unidades MassFlow...") 
         self.script_fluxo = lista_fluxo_nao_ar_tempo
         self.script_ajustado_fluxo_tempo_produto = []
         self.script_ajustado_fluxo_tempo_ar = []
@@ -84,6 +84,7 @@ class Orquestrador:
 
 
     def executar_rotina(self):
+        logger.escrever(f"[ORQUESTRADOR] Iniciando execução da rotina...") 
         print(f'Executando rotina: {self.script_fluxo}'); print('')
         for unidade in self.unidades:
             unidade.modo_digital()
@@ -98,6 +99,7 @@ class Orquestrador:
 
         self.processos = []
 
+        logger.escrever(f"[ORQUESTRADOR] Iniciando subprocessos MassFlow...") 
         for unidade in self.unidades:
             processo = Process(target=executa_subprocesso_mass_flow, args=(unidade, ))
             processo.unit_status = unidade.numero_equipamento
@@ -106,6 +108,7 @@ class Orquestrador:
         
         time.sleep(1)
 
+        logger.escrever(f"[ORQUESTRADOR] Iniciando subprocesso Arduino...") 
         processo_arduino = Process(target=executa_subprocesso_arduino, args=(self.arduino, ))
         self.processos.append(processo_arduino)
         processo_arduino.start()
@@ -141,8 +144,13 @@ def executa_subprocesso_mass_flow(objeto: MassFlowUnit):
         tempo_espera = objeto.executar_acao_da_fila()
         if tempo_espera is None: break
         time.sleep(tempo_espera)
+    
     global finaliza_rotina
     finaliza_rotina = True
+    
+    logger.escrever(f"[ORQUESTRADOR] Finalizando subprocesso MassFlow")
+    
+    objeto.fechar_fluxo() 
     os.system(f'python {root}\\nucleo\\construtor_tabela_resultados.py&')
     os.system(f'python {root}\\nucleo\\kill_ipvh_srv.py&')
 
@@ -157,4 +165,5 @@ def executa_subprocesso_arduino(objeto: ArduinoUnit):
         if tempo_espera is None: break
         time.sleep(tempo_espera)
         if finaliza_rotina: break
+    logger.escrever(f"[ORQUESTRADOR] Finalizando subprocesso Arduino")
 
