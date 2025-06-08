@@ -110,4 +110,115 @@ As mudanças de estado relevantes para acompanhar o andamento do experimento em 
 
 Na interface e-Nose, se o botão 'Para rotina' for acionado o orquestrador recebe o sinal de interrupção e o subprocesso 'ipvh_srv.py' é finalizado.
 
+### Estrutura do projeto
 
+```
+.
+│ 
+│   [informaçãoes dos dispositivos]
+├── config 
+│   ├── arduino.json
+│   ├── experimento.json
+│   ├── lcr.json
+│   ├── mass_flow.json
+│   └── parametros.json
+│ 
+│ 
+│   [dados de execução dos dospositivos e log]
+├── dados_execucao
+│   ├── arduino_data
+│   │   └── unit_status
+│   │       └── 1.json
+│   ├── lcr_data
+│   │   └── unit_status
+│   │       └── 1.json
+│   └── mass_flow_data
+│       └── unit_status
+│           ├── 608314-1.json
+│           ├── 608315-1.json
+│           └── 624644-1.json
+│ 
+│ 
+│ 
+│   [classes dos dispositivos, IPVH server, Orquestrador e scripts]
+├── nucleo
+│   ├── classes
+│   │   └── construtor.py [!não implementado/integrado]
+│   ├── construtor_tabela_resultados.py
+│   ├── devices
+│   │   ├── arduino_unit.py
+│   │   ├── lcr_unit.py
+│   │   └── mass_flow_unit.py
+│   ├── globals
+│   │   ├── logger.py
+│   │   └── paths.py
+│   ├── ipvh_srv.py
+│   ├── kill_ipvh_srv.py
+│   ├── mass_flow_client.py
+│   ├── mass_flow_info_reader.py
+│   ├── orquestrator_parallel.py
+│   ├── orquestrator_setup.py
+│   └── update_experiment_info.py
+│ 
+│ 
+│   [material de consulta sobre dispositivos e código do Arduino]
+├── resources
+│   ├── Arduino_Serial
+│   │   └── Arduino_Serial.ino
+│   ├── dpc_manual.pdf
+│   └── notes.md
+│ 
+│ 
+│   [pasta para conteúdo estático do Flask]
+├── static
+│   ├── css
+│   │   └── pearl_style_compilado.min.css
+│   ├── img
+│   │   ├── check.svg
+│   │   ├── copy-to.png
+│   │   ├── cross.svg
+│   │   ├── favicon.ico
+│   │   └── menu-burger.svg
+│   └── js
+│       ├── api_call.js
+│       ├── my_js_modules.js
+│       └── my_script.js
+│ 
+│ 
+│   [página com templates do Flask]
+├── templates
+│   ├── about.html
+│   ├── footer.html
+│   ├── form.html
+│   ├── formulario_arduino.html
+│   ├── formulario_experimento.html
+│   ├── formulario_lcr.html
+│   ├── formulario_rotina.html
+│   ├── index.html
+│   ├── layout.html
+│   ├── manutencao.html
+│   ├── message.html
+│   ├── monitor.html [!não implementado, depende e construtor]
+│   └── navbar.html
+│ 
+│ 
+│   [arquivos para testagem a partir da linha de comando]
+├── teste_arduino.py
+├── teste_experimento.py
+├── teste_graf.py
+├── teste_inicializar_dispositivos.py
+├── teste_ipvh_srv.py
+├── teste_lcr2.py
+├── teste_lcr-FROM_TH2816B.py
+├── teste_lcr.py
+├── teste_mass_flow_close.py
+├── teste_mass_flow.py
+│ 
+│ 
+│   [scripts de entrada da aplicação e informações do projeto]
+├── init.bat
+├── main.py
+├── pyproject.toml
+└── uv.lock
+```
+19 directories, 67 files
