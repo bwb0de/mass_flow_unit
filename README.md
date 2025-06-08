@@ -1,9 +1,5 @@
 # e-Nose orquestrator
-
-ATENÇÃO! 'main' é o ramo de desenvolvimento deste projeto. As diferentes versões estão em ramos nominados como v#. Dessa forma, para utilizar a versão mais recente, clone o repositório principal e, em seguida, troque para o ramo com o número de versão mais alto.
-
 ## Informações gerais
-
 Pacote com para plataforma e-Nose. Inclui:
     [1] MassFlowUnit, classe para comunicação simples com MassFlow utilizando pyserial.
     [2] ArduinoUnit, classe para comunicação com Arduino.
@@ -13,6 +9,7 @@ Pacote com para plataforma e-Nose. Inclui:
     [6] FlaskSrv, aplicação web para manipulação.
     [7] Testes de conectividade e execução do experimento.
     [8] Script .BAT de inicialização
+    [9] Scripts .py: [a] finalização servidor ipvh_srv, [b] construção de tabela resultados
 
 
 ## Como o conjunto funciona?
