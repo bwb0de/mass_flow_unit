@@ -6,6 +6,7 @@ import random
 import statistics
 
 from ..globals.paths import units_lcr_info_folder
+from ..globals import logger 
 
 TERMINATOR = "\n"
 ENCODING = "ascii"
@@ -108,7 +109,8 @@ class LCRUnit:
 
     def desconectar(self):
         try: self.ser.close()
-        except AttributeError: pass
+        except AttributeError:
+            if self.ser is None: logger.escrever("[LCR-UNIT] Tentando desconectar LCR sem ter conexão")
         self.ser = None
 
 
@@ -120,14 +122,17 @@ class LCRUnit:
         self.ser.flush()
         time.sleep(0.1)
         try: resposta = self.ser.readline().decode().strip()
-        except UnicodeDecodeError: resposta = ""
+        except UnicodeDecodeError: 
+            logger.escrever("[LCR-UNIT] Erro de codificação UTF8 no envio da mensagem ao LCR")
+            resposta = ""
         return resposta
 
     def ler(self):
         try:
             self.ser.reset_input_buffer()
             self.ser.reset_output_buffer()
-        except AttributeError: pass
+        except AttributeError:
+            if self.ser is None: logger.escrever("[LCR-UNIT] Tentando resetar buffer de LCR sem ter conexão")
         resposta = self.ser.readline().decode().strip()
         return resposta
 
@@ -164,14 +169,19 @@ class LCRUnit:
                 respostas_primarias.append(valor_primario)
                 respostas_secundarias.append(valor_secundario)
                 resposta_processada.append((valor_primario, valor_secundario))
-            except ValueError: pass
+            except ValueError:
+                logger.escrever(f"[LCR-UNIT] Erro no processamento da leitura do dado recebido: {linha}")
         
         resposta_processada = (statistics.median(respostas_primarias), statistics.median(respostas_secundarias))
 
+        ### [1] Verificar se arquivo TXT [2] está criando log adequadamente, se estiver, apagar aqui
         self.status.append(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...")
-
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
+
+        ### [2]
+        with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.txt', 'a') as unit_status_file:
+            unit_status_file.write(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...\n")
 
         return resposta_processada
 
