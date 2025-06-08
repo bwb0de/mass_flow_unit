@@ -7,6 +7,8 @@ info_file_windows = f'{root}\\dados_execucao\\mass_flow_data\\units_info.json'
 info_file_linux = f'{root}/dados_execucao/mass_flow_data/units_info.json'
 info_file = info_file_windows
 
+log_file = f'{root}\\dados_execucao\\log.txt'
+
 units_info_folder_windows = f'{root}\\dados_execucao\\mass_flow_data\\unit_status'
 units_info_folder_linux = f'{root}/dados_execucao/mass_flow_data/unit_status'
 units_info_folder = units_info_folder_windows
