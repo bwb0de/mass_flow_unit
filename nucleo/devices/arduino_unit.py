@@ -104,7 +104,6 @@ class ArduinoUnit:
     def enviar_comando(self, comando):
         if self.conexao is None: print("É necessário conectar antes de enviar comandos..."); return
         self.conexao.write(bytes(str(comando), 'utf-8'))
-        #time.sleep(0.5)
 
     def ler_resposta(self):
         resposta = self.conexao.readline().decode('utf-8').strip()
@@ -119,10 +118,10 @@ class ArduinoUnit:
         self.enviar_comando('p')                         #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
 
         self.sensor_corrente = f'S{self.ler_resposta()}' #Números match, A = 10; B = 11
-        #print(f"Sensor corrente: {self.sensor_corrente}")
+
         time.sleep(1.0)
+
         self.valores_lcr = self.lcr.ler_medidas()
-        #print(self.valores_lcr)
         self.valores_lcr = str(self.valores_lcr).replace(", ", ":::")
         
         #self.construtor_grafico.gerar_grafico(
@@ -133,13 +132,18 @@ class ArduinoUnit:
 
         tempo_step = self.tempo_espera
 
+        ### [1] Verificar se arquivo TXT [2] está criando log adequadamente, se estiver, apagar aqui
         self.status.append(f"[{time.ctime()}] => {self}: modificando sensor para {self.sensor_corrente}")
         with open(f'{units_arduino_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
             json.dump(self.status, unit_status_file, indent=4)        
 
+        ### [2]
+        with open(f'{units_arduino_info_folder}{os.sep}{self.numero_equipamento}.txt', 'a') as unit_status_file:
+            unit_status_file.write(f"[{time.ctime()}] => {self}: modificando sensor para {self.sensor_corrente}\n")
+   
         self.tempo_transcorrido += tempo_step
         if self.tempo_transcorrido > self.tempo_total_execucao:
-            return None
+            return None     #Retornar None indica eu o experimento acabou...
         return tempo_step
 
 
