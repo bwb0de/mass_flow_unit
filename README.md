@@ -33,6 +33,7 @@ Ao modificar as portas de conexão dos dispositivos, verifique no sistema operac
 
 #### arduino.json
 
+```
 [
     {
         "nome": "Sensores",
@@ -42,9 +43,11 @@ Ao modificar as portas de conexão dos dispositivos, verifique no sistema operac
         "tempo_espera": 3
     }
 ]
+```
 
 #### lcr.json
 
+```
 [
     {
         "nome": "LCR",
@@ -57,9 +60,11 @@ Ao modificar as portas de conexão dos dispositivos, verifique no sistema operac
         "numero_medidas": "10"
     }
 ]
+```
 
 #### mass_flow.json
 
+```
 [
     {
         "porta": "COM6",
@@ -80,7 +85,7 @@ Ao modificar as portas de conexão dos dispositivos, verifique no sistema operac
         "conteudo_fluxo": "produto"
     }
 ]
-
+```
 
 Observe que todos arquivos possuem "[]" como delimitador de campo mais externo, isso ocorre devido a possibilidade de configurarmos mais de um dispositivo, muito embora, no momento, com excessão dos dispositivos mass_flow, os dispositicos Arduino e LCR possuam um único comportamento definido.
 
