@@ -7,6 +7,7 @@ import time
 from pprint import pprint
 
 from .globals.paths import log_file
+from .globals import logger
 
 pasta_dados_experimento = "C:\\Users\\Mauro\\Desktop\\Dados Experimentos"
 arquivo_dados_experimento = "C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\config\\experimento.json"
@@ -88,7 +89,7 @@ def handle_client(diretorio_corrente_dados, client_socket, chunksize=1024) -> st
                 ipvh['sensor_loop'][sensor]["primary"].append(primario)
                 ipvh['sensor_loop'][sensor]["secondary"].append(secundario)
             except KeyError:
-                with open(log_file, 'a') as f: f.write(f"[{time.ctime()}] => Sensor {sensor} inválido!\n")
+                logger.escrever(f"[IPVH-SRV] Sensor {sensor} inválido!")
                 
             ### [1] Verificar se arquivo TXT [2] está criando log adequadamente, se estiver, apagar aqui
             with open(f"{diretorio_corrente_dados}\\dados_sensores.json", 'w') as arquivo_dados_sensores:
@@ -158,13 +159,13 @@ def mudar_parametros_experimento():
     ano, mes, dia, hora, minuto = datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day, datetime.datetime.today().hour, datetime.datetime.today().minute
     os.chdir(pasta_dados_experimento)
     try: os.mkdir(nome_pesquisador)
-    except: with open(log_file, 'a') as f: f.write(f"[{time.ctime()}] => Erro ao criar a pasta {nome_pesquisador}, em {pasta_dados_experimento} pasta já existe?\n")
+    except: logger.escrever(f"[IPVH-SRV] Erro ao criar a pasta {nome_pesquisador}, em {pasta_dados_experimento} pasta já existe?")
     os.chdir(nome_pesquisador)
     try: os.mkdir(nome_substancia)
-    except: with open(log_file, 'a') as f: f.write(f"[{time.ctime()}] => Erro ao criar a pasta {nome_substancia}, em '{pasta_dados_experimento}{os.sep}{nome_pesquisador}' pasta já existe?\n")
+    except: logger.escrever(f"[IPVH-SRV] Erro ao criar a pasta {nome_substancia}, em '{pasta_dados_experimento}{os.sep}{nome_pesquisador}' pasta já existe?")
     os.chdir(nome_substancia)
     try: os.mkdir(f"{ano}_{mes}_{dia}-{hora}_{minuto}")
-    except: with open(log_file, 'a') as f: f.write(f"[{time.ctime()}] => Erro ao criar a pasta {ano}_{mes}_{dia}-{hora}_{minuto}, pasta já existe?\n")
+    except: logger.escrever(f"[IPVH-SRV] Erro ao criar a pasta {ano}_{mes}_{dia}-{hora}_{minuto}, pasta já existe?")
     os.chdir(f"{ano}_{mes}_{dia}-{hora}_{minuto}")
     global diretorio_corrente_dados
     diretorio_corrente_dados = os.getcwd()
