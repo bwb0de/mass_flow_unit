@@ -1,9 +1,11 @@
-
 import traceback
+import time
+
+import serial
+
 from serial.threaded import LineReader, ReaderThread
 
-import time
-import serial
+from nucleo.globals import logger
 
 porta_de_conexao = 'COM5'
 
@@ -94,5 +96,5 @@ class SerialReaderProtocolLine(LineReader):
 #lcr.transport.serial.flush()
 
 lcr = LCRConnection('COM5')
-lcr.enviar_comandos([""trig:sour bus;*trg"])
+lcr.enviar_comandos(["trig:sour bus;*trg"])
 lcr.close()
