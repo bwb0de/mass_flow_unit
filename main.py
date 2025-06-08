@@ -152,8 +152,9 @@ def formulario_experimento():
         with open(experimento_config, 'w') as arquivo_experimento:
             json.dump(conf, arquivo_experimento, indent=4)
 
+        os.system(f'python {root}\\nucleo\\update_experiment_info.py&')
         return redirect('/')
-    
+
     with open(experimento_config) as arquivo_experimento:
         experimento = json.loads(arquivo_experimento.read())
         print(experimento)

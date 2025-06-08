@@ -64,6 +64,10 @@ def handle_client(diretorio_corrente_dados, client_socket, chunksize=1024) -> st
         if data == 'exit':
             exit()
 
+        elif data == 'update_exp':
+            mudar_parametros_experimento()
+            client_socket.send(" ".encode())
+
         elif data == '@':
             if contador_mensagens_recebidas > 6:
                 contador_mensagens_recebidas = 0
