@@ -150,6 +150,7 @@ class LCRUnit:
 
 
     def ler_medidas(self):
+        logger.escrever("[LCR-UNIT] Lendo dados de LCR...") 
         if self.ser is None:
             self.conectar()
 
@@ -172,6 +173,7 @@ class LCRUnit:
             except ValueError:
                 logger.escrever(f"[LCR-UNIT] Erro no processamento da leitura do dado recebido: {linha}")
         
+        logger.escrever("[LCR-UNIT] Calculando mediana dos valores válidos]...") 
         resposta_processada = (statistics.median(respostas_primarias), statistics.median(respostas_secundarias))
 
         ### [1] Verificar se arquivo TXT [2] está criando log adequadamente, se estiver, apagar aqui
@@ -183,6 +185,7 @@ class LCRUnit:
         with open(f'{units_lcr_info_folder}{os.sep}{self.numero_equipamento}.txt', 'a') as unit_status_file:
             unit_status_file.write(f"[{time.ctime()}] => {self}: executando {self.numero_medidas} medidas...\n")
 
+        logger.escrever("[LCR-UNIT] Retornando respostas ao ARDUINO-UNIT...") 
         return resposta_processada
 
 

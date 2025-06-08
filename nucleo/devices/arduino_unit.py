@@ -7,6 +7,7 @@ import serial
 from nucleo.ipvh_srv import set_value
 
 from ..globals.paths import units_arduino_info_folder
+from ..globals import logger
 
 class ArduinoUnitTest:
     def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None, tempo_espera=2.2) -> None:
@@ -90,19 +91,25 @@ class ArduinoUnit:
         self.tempo_total_execucao = tempo
 
     def vincular_lcr(self, lcr):
+        logger.escrever("[ARDUINO-UNIT] Vinculando LCR...")
         self.lcr = lcr
 
     def conectar(self):
+        logger.escrever("[ARDUINO-UNIT] Conectando ao arduino...")
         self.conexao = serial.Serial(port=self.porta_de_conexao, baudrate=self.taxa_de_transmissao, timeout=.1)
         time.sleep(1.50)
 
     def desconectar(self):
+        logger.escrever("[ARDUINO-UNIT] Desconectando do arduino...")
         self.conexao.close()
         time.sleep(1.50)
         self.conexao = None
 
     def enviar_comando(self, comando):
-        if self.conexao is None: print("É necessário conectar antes de enviar comandos..."); return
+        if self.conexao is None: 
+            print("É necessário conectar antes de enviar comandos...")
+            logger.escrever("[ARDUINO-UNIT] Erro ao enviar comando, arduino desconectado...")
+            return
         self.conexao.write(bytes(str(comando), 'utf-8'))
 
     def ler_resposta(self):
@@ -115,12 +122,18 @@ class ArduinoUnit:
         if self.tempo_transcorrido is None:
             self.tempo_transcorrido = 0
 
-        self.enviar_comando('p')                         #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
-
-        self.sensor_corrente = f'S{self.ler_resposta()}' #Números match, A = 10; B = 11
+        logger.escrever("[ARDUINO-UNIT] Solicitando mudança para próximo sensor no Arduino...")
+        self.enviar_comando('p')
+        #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
 
         time.sleep(1.0)
+        logger.escrever("[ARDUINO-UNIT] Lendo resposta relativa ao sensor...")
+        self.sensor_corrente = f'S{self.ler_resposta()}' #Números match, A = 10; B = 11
+        
+        logger.escrever("[ARDUINO-UNIT] Enviando sensor ativo ao ipvh_srv...")
+        set_value('sensor_corrente', f"{self.sensor_corrente}=>{self.valores_lcr}")
 
+        logger.escrever("[ARDUINO-UNIT] Solicitando que LCR-UNIT leia as medidas...") 
         self.valores_lcr = self.lcr.ler_medidas()
         self.valores_lcr = str(self.valores_lcr).replace(", ", ":::")
         
@@ -128,7 +141,6 @@ class ArduinoUnit:
         #    self.sensor_corrente, 
         #    self.valores_lcr)                           #Retorna nome do gráfico na pasta static/img
         
-        set_value('sensor_corrente', f"{self.sensor_corrente}=>{self.valores_lcr}")
 
         tempo_step = self.tempo_espera
 

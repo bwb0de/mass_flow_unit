@@ -127,6 +127,7 @@ class MassFlowUnit:
         self.etapa_execucao += 1
 
         if self.etapa_execucao % self.etapas_microciclo == 0:
+            logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Finalizando microciclo experiência")
             send_command("@")
 
         self.parar_rotina = False        
@@ -148,6 +149,7 @@ class MassFlowUnit:
         self.enviar_comandos(['M,D', 'SP,0.0', 'SP', 'V,M,A'])
 
     def fechar_fluxo(self):
+        logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Fechando fluxo de ar...")
         print(f'{self}: fechando fluxo...')
         self.status.append(f"[{time.ctime()}] => {self}: fechando fluxo...")
         with open(f'{units_info_folder}{os.sep}{self.numero_equipamento}.json', 'w') as unit_status_file:
@@ -157,15 +159,18 @@ class MassFlowUnit:
     def enviar_comandos(self, commandos: list):
         if commandos == []: return
 
+        logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Conectando ao dispositivo para enviar comandos...")
         try:
             with serial.Serial(self.porta_de_conexao, self.taxa_de_transmissao, timeout=1) as ser:
                 respostas = []
+                logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Enviando comandos...")
                 for cmd in commandos:
                     comando_teste = bytes(f'{cmd}\r\n', 'utf-8')
                     ser.write(comando_teste)
                     resposta = ser.readline().decode().strip()
                     respostas.append((cmd, resposta))
-                return respostas
+            logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Desconectando...")
+            return respostas
 
         except serial.SerialException as e:
             logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Erro ao conectar na porta serial: {e}")
@@ -183,6 +188,7 @@ class MassFlowUnit:
             logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Erro ao conectar na porta serial: {e}")            
 
     def obter_estado_equipamento(self):
+        logger.escrever(f"[MASS-FLOW:{self.numero_equipamento}] Solicitando dados do equipamento...")
         dados = self.enviar_comandos([
             'DI',
             'PI',
