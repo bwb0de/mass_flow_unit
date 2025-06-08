@@ -13,6 +13,8 @@ from nucleo.orquestrator_setup import inicializar_orquestrador_mass_flow #, inic
 from nucleo.mass_flow_info_reader import update_info
 from nucleo.globals.paths import root, parametros_mass_flow, arduino_config, lcr_config, experimento_config
 
+from nucleo.globals import logger
+
 os.chdir(root)
 
 ### Variáveis globais
@@ -59,7 +61,7 @@ def monitor_api():
 
 def ipvh_subprocess():
     try: os.system(f'python {root}\\nucleo\\ipvh_srv.py')
-    except: pass
+    except: logger.escrever(f"[FLASK-APP] Erro ao iniciar ipvh_srv, o caminho existe?")
 
 
 
