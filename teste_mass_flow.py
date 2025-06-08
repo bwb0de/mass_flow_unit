@@ -1,7 +1,7 @@
 import time
 import json
 
-from nucleo.paths import mass_flow_config
+from nucleo.globals.paths import mass_flow_config
 from nucleo.devices.mass_flow_unit import MassFlowUnit
 
 

@@ -11,7 +11,7 @@ from flask import render_template, request, redirect
 
 from nucleo.orquestrator_setup import inicializar_orquestrador_mass_flow #, inicializar_orquestrador_mass_flow_teste
 from nucleo.mass_flow_info_reader import update_info
-from nucleo.paths import root, parametros_mass_flow, arduino_config, lcr_config, experimento_config
+from nucleo.globals.paths import root, parametros_mass_flow, arduino_config, lcr_config, experimento_config
 
 os.chdir(root)
 

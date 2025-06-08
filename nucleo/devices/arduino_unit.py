@@ -6,7 +6,7 @@ import serial
 
 from nucleo.ipvh_srv import set_value
 
-from ..paths import units_arduino_info_folder
+from ..globals.paths import units_arduino_info_folder
 
 class ArduinoUnitTest:
     def __init__(self, porta, taxa_de_transmissao:int=9600, modelo:str='uno', nome=None, tempo_espera=2.2) -> None:

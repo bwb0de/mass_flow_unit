@@ -1,7 +1,7 @@
 import time
 import json
 
-from nucleo.paths import arduino_config
+from nucleo.globals.paths import arduino_config
 from nucleo.devices.arduino_unit import ArduinoUnit
 
 arduino_unit = None

@@ -5,7 +5,7 @@ import serial
 import random
 import statistics
 
-from ..paths import units_lcr_info_folder
+from ..globals.paths import units_lcr_info_folder
 
 TERMINATOR = "\n"
 ENCODING = "ascii"

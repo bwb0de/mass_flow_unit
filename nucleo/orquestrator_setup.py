@@ -6,9 +6,9 @@ from .devices.arduino_unit import ArduinoUnit, ArduinoUnitTest
 
 from .orquestrator_parallel import Orquestrador
 
-from .paths import mass_flow_config
-from .paths import arduino_config
-from .paths import lcr_config
+from .globals.paths import mass_flow_config
+from .globals.paths import arduino_config
+from .globals.paths import lcr_config
 
 
 

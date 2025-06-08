@@ -7,10 +7,10 @@ from multiprocessing import Process
 from nucleo.devices.mass_flow_unit import MassFlowUnit
 from nucleo.devices.arduino_unit import ArduinoUnit
 from nucleo.devices.lcr_unit import LCRUnit
-from nucleo.paths import root
+from nucleo.globals.paths import root
 
 
-from .paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
+from .globals.paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
 
 finaliza_rotina = False
 

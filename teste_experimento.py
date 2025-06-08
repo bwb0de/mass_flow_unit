@@ -5,7 +5,7 @@ from multiprocessing import freeze_support
 
 from nucleo.orquestrator_setup import inicializar_orquestrador_mass_flow
 from nucleo.mass_flow_info_reader import update_info
-from nucleo.paths import root, parametros_mass_flow, arduino_config, lcr_config
+from nucleo.globals.paths import root, parametros_mass_flow, arduino_config, lcr_config
 
 if __name__ == '__main__':
     freeze_support()

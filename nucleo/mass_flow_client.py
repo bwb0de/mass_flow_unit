@@ -6,7 +6,7 @@ import requests
 MASS_FLOW_SERVER_HOST = '127.0.0.1'
 MASS_FLOW_SERVER_PORT = '5000'
 
-from .paths import parametros
+from .globals.paths import parametros
 
 def request_api_addr(url, params={}):
     response = requests.get(url, params=params)

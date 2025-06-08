@@ -1,8 +1,8 @@
 import json
 import os
 
-from .paths import root
-from .paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
+from .globals.paths import root
+from .globals.paths import units_info_folder, units_arduino_info_folder, units_lcr_info_folder
 
 def get_logfile_info(unit_folder):
     os.chdir(unit_folder)

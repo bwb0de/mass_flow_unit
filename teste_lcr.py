@@ -1,7 +1,7 @@
 import json
 import time
 
-from nucleo.paths import lcr_config
+from nucleo.globals.paths import lcr_config
 from nucleo.devices.lcr_unit import LCRUnit
 
 lcr_unit = None

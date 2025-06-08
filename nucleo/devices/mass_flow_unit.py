@@ -4,7 +4,7 @@ import time
 import json
 import random
 
-from ..paths import units_info_folder
+from ..globals.paths import units_info_folder
 from ..ipvh_srv import send_command
 
 class MassFlowUnitTest:
