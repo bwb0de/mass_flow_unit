@@ -12,13 +12,15 @@ from .paths import lcr_config
 
 
 
-def inicializar_orquestrador_mass_flow():
+def inicializar_orquestrador_mass_flow(etapas_microciclo):
     mass_flow_units = []
     with open(mass_flow_config) as arquivo_mass_flow_config:
         definicoes = json.loads(arquivo_mass_flow_config.read())
         for unit in definicoes:
             mass_flow_unit = MassFlowUnit(unit['porta'], unit['taxa_de_transmissao'], unit['fluxo_maximo'], unit['conteudo_fluxo'])
             mass_flow_units.append(mass_flow_unit)
+            mass_flow_unit.etapas_microciclo = etapas_microciclo
+
 
     print(mass_flow_units)
 

@@ -119,10 +119,10 @@ class ArduinoUnit:
         self.enviar_comando('p')                         #Assumindo que arduino possui o código: resources/Arduino_Serial/Arduino_Serial.ino
 
         self.sensor_corrente = f'S{self.ler_resposta()}' #Números match, A = 10; B = 11
-        print(f"Sensor corrente: {self.sensor_corrente}")
-        time.sleep(0.26)
+        #print(f"Sensor corrente: {self.sensor_corrente}")
+        time.sleep(1.0)
         self.valores_lcr = self.lcr.ler_medidas()
-        print(self.valores_lcr)
+        #print(self.valores_lcr)
         self.valores_lcr = str(self.valores_lcr).replace(", ", ":::")
         
         #self.construtor_grafico.gerar_grafico(

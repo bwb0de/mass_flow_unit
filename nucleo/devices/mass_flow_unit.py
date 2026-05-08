@@ -5,6 +5,7 @@ import json
 import random
 
 from ..paths import units_info_folder
+from ..ipvh_srv import send_command
 
 class MassFlowUnitTest:
     def __init__(self, porta, taxa_de_transmissao, fluxo_maximo:int, conteudo_fluxo:str) -> None:
@@ -90,6 +91,7 @@ class MassFlowUnit:
         self.numero_equipamento = self.enviar_comando('MR,1')
         self.parar_rotina = None
         self.etapa_execucao = 0
+        self.etapas_microciclo = 0
         self.fluxo_corrente = None
         self.fluxo_maximo = fluxo_maximo
         self.conteudo_fluxo = conteudo_fluxo
@@ -122,6 +124,10 @@ class MassFlowUnit:
             self.fechar_fluxo()
             return
         self.etapa_execucao += 1
+
+        if self.etapa_execucao % self.etapas_microciclo == 0:
+            send_command("@")
+
         self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]
         self.fluxo_corrente = fluxo
