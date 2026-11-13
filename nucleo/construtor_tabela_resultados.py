@@ -3,7 +3,7 @@ import pandas as pd
 import json
 
 
-pasta_dados_experimento = "C:\\Users\\Mauro\\Desktop\\Dados Experimentos"
+pasta_dados_experimento = "C:\\Users\\Mauro\\Documents\\Experimentos"
 arquivo_dados_experimento = "C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\config\\experimento.json"
 
 production_root = 'C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit'

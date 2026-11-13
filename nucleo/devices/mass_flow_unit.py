@@ -125,8 +125,8 @@ class MassFlowUnit:
             return
         self.etapa_execucao += 1
 
-        if self.etapa_execucao % self.etapas_microciclo == 0:
-            send_command("@")
+        #if self.etapa_execucao % self.etapas_microciclo == 0:
+        #    send_command("@")
 
         self.parar_rotina = False        
         fluxo, tempo = self.fila_execucao[0]

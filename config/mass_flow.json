@@ -1,6 +1,6 @@
 [
     {
-        "porta": "COM6",
+        "porta": "COM8",
         "taxa_de_transmissao": 9600,
         "fluxo_maximo": 200,
         "conteudo_fluxo": "Ar"
@@ -12,7 +12,7 @@
         "conteudo_fluxo": "Ar"
     },
     {
-        "porta": "COM8",
+        "porta": "COM4",
         "taxa_de_transmissao": 9600,
         "fluxo_maximo": 100,
         "conteudo_fluxo": "produto"

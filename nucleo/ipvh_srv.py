@@ -6,7 +6,7 @@ import time
 
 from pprint import pprint
 
-pasta_dados_experimento = "C:\\Users\\Mauro\\Desktop\\Dados Experimentos"
+pasta_dados_experimento = "C:\\Users\\Mauro\\Documents\\Experimentos"
 arquivo_dados_experimento = "C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit\\config\\experimento.json"
 
 production_root = 'C:\\Users\\Mauro\\Documents\\Devel\\mass_flow_unit'
@@ -63,14 +63,14 @@ def handle_client(diretorio_corrente_dados, client_socket) -> str:
         if data == 'exit':
             exit()
 
-        elif data == '@':
-            if contador_mensagens_recebidas > 6:
-                contador_mensagens_recebidas = 0
-                for sensor in ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8']:
-                    ipvh['sensor_loop'][sensor]["primary"].append('@')
-                    ipvh['sensor_loop'][sensor]["secondary"].append('@')
-
-            client_socket.send(" ".encode())
+        #elif data == '@':
+        #    if contador_mensagens_recebidas > 6:
+        #        contador_mensagens_recebidas = 0
+        #        for sensor in ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8']:
+        #            ipvh['sensor_loop'][sensor]["primary"].append('@')
+        #            ipvh['sensor_loop'][sensor]["secondary"].append('@')
+        #
+        #    client_socket.send(" ".encode())
 
         instrucoes = data.strip().split(' ')
 

@@ -2,7 +2,7 @@
     {
         "nome": "Sensores",
         "modelo": "uno",
-        "porta": "COM10",
+        "porta": "COM3",
         "taxa_de_transmissao": 9600,
         "tempo_espera": 3
     }

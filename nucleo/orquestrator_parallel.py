@@ -88,13 +88,14 @@ class Orquestrador:
         for unidade in self.unidades:
             unidade.modo_digital()
 
+        '''
         shutil.rmtree(units_info_folder)
         os.mkdir(units_info_folder)
         shutil.rmtree(units_lcr_info_folder)
         os.mkdir(units_lcr_info_folder)
         shutil.rmtree(units_arduino_info_folder)
         os.mkdir(units_arduino_info_folder)
-
+        '''
 
         self.processos = []
 
